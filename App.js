@@ -21,5 +21,4 @@ const MainNavigator = createStackNavigator({
 
 const App = createAppContainer(MainNavigator);
 
-// test
 export default App;

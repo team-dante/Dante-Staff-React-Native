@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { View, StyleSheet} from 'react-native';
+import CustomizedButton from "../components/button";
 
 export default class StaffLogin extends React.Component {
     render() {
+        console.log("????");
         return (
-            <View>
-                <Text style={{fontSize: 100}}>Hi</Text>
+            <View style={styles.container}>
+                <CustomizedButton label={"Login"} onPress={() => {}}/>                  
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        alignItems: 'center',
+    }
+});

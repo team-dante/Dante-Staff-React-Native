@@ -1,6 +1,7 @@
-
+'use strict';
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {StyleSheet, View, Text } from 'react-native';
+import CustomizedButton from '../components/button';
 
 export default class HomeScreen extends React.Component {
     render() {
@@ -8,50 +9,14 @@ export default class HomeScreen extends React.Component {
             <View style={styles.container}>
                 <Text style={styles.welcome}>Welcome to Dante App!</Text>
                 <Text style={styles.instructions}>To get started, please choose approriate role.</Text>
-                <TouchableOpacity
-                    style={styles.staffButton}
-                    onPress={() => this.props.navigation.navigate('StaffLogin')}>
-                    <Text style={styles.staffText}>Staff</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.patientButton}
-                    onPress={() => { }}>
-                    <Text style={styles.patientText}>Patient</Text>
-                </TouchableOpacity>
+                <CustomizedButton label={"Staff"} onPress={() => this.props.navigation.navigate('StaffLogin')} />
+                <CustomizedButton label={"Patient"} onPress={() => {}} />
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    staffButton: {
-        backgroundColor: '#68a0cf',
-        borderRadius: 10,
-        borderColor: '#fff',
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 30,
-        paddingRight: 30,
-        marginBottom: 10,
-    },
-    staffText: {
-        color: '#fff',
-        textAlign: 'center',
-    },
-    patientButton: {
-        backgroundColor: '#68a0cf',
-        borderRadius: 10,
-        borderColor: '#fff',
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 30,
-        paddingRight: 30,
-        marginBottom: 10,
-    },
-    patientText: {
-        color: '#fff',
-        textAlign: 'center',
-    },
     container: {
         flex: 1,
         justifyContent: 'center',

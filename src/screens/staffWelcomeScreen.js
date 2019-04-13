@@ -2,18 +2,20 @@
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
-export default class HomeScreen extends React.Component {
+export default class StaffLogin extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.bigText}>Welcome to Dante App!</Text>
-                <Text style={styles.smallText}>To get started, please choose approriate role.</Text>
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => this.props.navigation.navigate('StaffLogin')}>
-                    <Text style={styles.buttonText}>Staff</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => {} }>
-                    <Text style={styles.buttonText}>Patient</Text>
-                </TouchableOpacity>
+                <Text style={styles.bigText}>Hi, Dr. Dante Roa!</Text>
+                <Text style={styles.smallText}>What would you like to do?</Text>
+                <TouchableOpacity style={styles.buttonContainer} 
+                     onPress={() => {}}>
+                    <Text style={styles.buttonText}>Generate Patients' Access Code</Text>
+                </TouchableOpacity> 
+                <TouchableOpacity style={styles.buttonContainer} 
+                     onPress={() => {}}>
+                    <Text style={styles.buttonText}>Look up Patients' Access Code</Text>
+                </TouchableOpacity> 
             </View>
         );
     }

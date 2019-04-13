@@ -13,10 +13,12 @@ import {
 
 import HomeScreen from './src/screens/homeScreen';
 import StaffLogin from './src/screens/staffLoginScreen';
+import StaffWelcome from './src/screens/staffWelcomeScreen';
 
 const MainNavigator = createStackNavigator({
   Home: {screen: HomeScreen},
   StaffLogin: {screen : StaffLogin},
+  StaffWelcome: {screen : StaffWelcome}
 });
 
 const App = createAppContainer(MainNavigator);

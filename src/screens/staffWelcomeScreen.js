@@ -6,15 +6,15 @@ export default class StaffLogin extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.bigText}>Hi, Dr. Dante Roa!</Text>
+                <Text style={styles.bigText}>Hi, Staff XYZ</Text>
                 <Text style={styles.smallText}>What would you like to do?</Text>
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => {}}>
-                    <Text style={styles.buttonText}>Generate Patients' Access Code</Text>
+                     onPress={() => this.props.navigation.navigate('GeneratePatientAccessCode')}>
+                    <Text style={styles.buttonText}>Generate Patient's Access Code</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => {}}>
-                    <Text style={styles.buttonText}>Look up Patients' Access Code</Text>
+                     onPress={() => this.props.navigation.navigate('LookupPatientAccessCode')}>
+                    <Text style={styles.buttonText}>Look up Patient's Access Code</Text>
                 </TouchableOpacity> 
             </View>
         );

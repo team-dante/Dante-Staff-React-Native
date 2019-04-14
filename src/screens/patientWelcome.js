@@ -16,6 +16,10 @@ export default class StaffLogin extends React.Component {
                      onPress={() => {}}>
                     <Text style={styles.buttonText}>Give Feedback</Text>
                 </TouchableOpacity> 
+                <TouchableOpacity style={styles.buttonContainer} 
+                     onPress={() => this.props.navigation.navigate('Home')}>
+                    <Text style={styles.buttonText}>Log out</Text>
+                </TouchableOpacity> 
             </View>
         );
     }

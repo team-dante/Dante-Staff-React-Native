@@ -8,7 +8,8 @@
 
 import {
   createStackNavigator,
-  createAppContainer
+  createAppContainer,
+  NavigationActions,
 } from 'react-navigation';
 
 import HomeScreen from './src/screens/homeScreen';
@@ -30,6 +31,8 @@ const MainNavigator = createStackNavigator({
   LookupPatientAccessCode: {screen: LookupPatientAccessCode},
   ShowAccessCode : {screen: ShowAccessCode},
 });
+
+
 
 const App = createAppContainer(MainNavigator);
 

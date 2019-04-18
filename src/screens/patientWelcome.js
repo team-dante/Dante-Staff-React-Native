@@ -11,7 +11,7 @@ export default class StaffLogin extends React.Component {
                 <TouchableOpacity style={styles.buttonContainer} 
                      onPress={() => {}}>
                     <Text style={styles.buttonText}>See Staff's Location in Real Time</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>  
                 <TouchableOpacity style={styles.buttonContainer} 
                      onPress={() => {}}>
                     <Text style={styles.buttonText}>Give Feedback</Text>

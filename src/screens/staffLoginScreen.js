@@ -26,6 +26,7 @@ export default class StaffLogin extends React.Component {
                     .then(success => {
                         console.log('Authenticated Successfully');
                         console.log("success = " + success);
+                        this.props.navigation.navigate('StaffWelcome');
                     })
                     .catch(error => {
                         console.log('Authentication Failed');
@@ -60,7 +61,7 @@ export default class StaffLogin extends React.Component {
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonContainer}
-                    onPress={ this._pressHandler }>
+                    onPress={ this._pressHandler.bind(this) }>
                     <Text style={styles.buttonText}>Login with Face/Touch ID</Text>
                 </TouchableOpacity>
             </View>

@@ -3,13 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, Sta
 import TouchID from 'react-native-touch-id';
 
 export default class StaffLogin extends React.Component {
-    constructor(props) {
-        super(props);
-    
-        this.state = {
-          checkedCredentials: false
-        };
-      }
 
     _pressHandler() {
 
@@ -45,10 +38,7 @@ export default class StaffLogin extends React.Component {
     }
 
     render() {
-        const { checkedCredentials } = this.state;
-        if (checkedCredentials) {
-            this.props.navigation.navigate('StaffWelcome');
-        }
+
         return (
             <View style={styles.container}>
                 <Text style={styles.text}>Username</Text>

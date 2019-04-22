@@ -1,8 +1,61 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import TouchID from 'react-native-touch-id';
+import firebase from 'firebase';
 
 export default class StaffLogin extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { email: '', password: '', error: '' };
+    }
+
+    onButtonPress() {
+        this.setState({ error: '', loading: true })
+        const { email, password } = this.state;
+        console.log('email = ' + this.state.email);
+        console.log('password = ' + this.state.password);
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then( () => { this.onLoginSuccess.bind(this); })
+            .catch( (error) => {
+                this.onLoginFailure.bind(this)(error);
+            });
+    }
+    onLoginSuccess() {
+        console.log("SUCCESS");
+        this.setState({
+            email: '', password: '', error: '', loading: false
+        });
+        this.props.navigation.navigate('StaffWelcome');
+    }
+
+    onLoginFailure(errorParam) {
+        console.log("FAILURE");
+
+        let errorCode = errorParam.code;
+        let errorMessage = errorParam.message;
+
+        console.log("errorCode = " + errorCode);
+        console.log("errorMessage = " + errorMessage);
+
+        this.setState({ error: errorMessage, loading: false });
+    }
+
+    renderButton() {
+        if (this.state.loading) {
+            return (
+                <View>
+                    <ActivityIndicator size={"small"} />
+                </View>
+            )
+        } else {
+            return (
+                <TouchableOpacity style={styles.buttonContainer}
+                    onPress={this.onButtonPress.bind(this)}>
+                    <Text style={styles.buttonText}>Login</Text>
+                </TouchableOpacity>
+            )
+        }
+    }
 
     _pressHandler() {
 
@@ -42,18 +95,30 @@ export default class StaffLogin extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.text}>Username</Text>
-                <TextInput style={styles.input} />
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={email => this.setState({ email })}
+                    value={this.state.email} />
                 <Text style={styles.text}>Password</Text>
-                <TextInput style={styles.input}
-                    secureTextEntry />
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={true}
+                    autoCapitalize="none"
+                    onChangeText={password => this.setState({ password })}
+                    value={this.state.password} />
+
+                {this.renderButton()}
+
                 <TouchableOpacity style={styles.buttonContainer}
-                    onPress={() => this.props.navigation.navigate('StaffWelcome')}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonContainer}
-                    onPress={ this._pressHandler.bind(this) }>
+                    onPress={this._pressHandler.bind(this)}>
                     <Text style={styles.buttonText}>Login with Face/Touch ID</Text>
                 </TouchableOpacity>
+
+                <Text style={styles.errorTextStyle}>
+                    {this.state.error}
+                </Text>
             </View>
         );
     }
@@ -89,5 +154,10 @@ const styles = StyleSheet.create({
         color: "#FFF",
         textAlign: "center",
         height: 20
-    }
+    },
+    errorTextStyle: {
+        fontSize: 16,
+        textAlign: 'center',
+        color: 'red'
+    },
 });

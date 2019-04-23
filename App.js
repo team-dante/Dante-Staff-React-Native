@@ -55,6 +55,9 @@ export default class App extends Component {
     };
     console.log(config);
     firebase.initializeApp(config);
+
+    console.log("exit componentDidMount");
+    
   }
 
   render() {

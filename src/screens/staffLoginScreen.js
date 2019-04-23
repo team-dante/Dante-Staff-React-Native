@@ -15,13 +15,14 @@ export default class StaffLogin extends React.Component {
         console.log('email = ' + this.state.email);
         console.log('password = ' + this.state.password);
         firebase.auth().signInWithEmailAndPassword(email, password)
-            .then( () => { this.onLoginSuccess.bind(this); })
+            .then( (user) => { this.onLoginSuccess.bind(this)(user); })
             .catch( (error) => {
                 this.onLoginFailure.bind(this)(error);
             });
     }
-    onLoginSuccess() {
+    onLoginSuccess(user) {
         console.log("SUCCESS");
+        console.log(user)
         this.setState({
             email: '', password: '', error: '', loading: false
         });

@@ -23,6 +23,7 @@ import LookupPatientAccessCode from './src/screens/lookupPatientAccessCode';
 import ShowAccessCode from './src/screens/showAcessCode';
 import PatientLogin from './src/screens/patientLogin';
 import PatientWelcome from './src/screens/patientWelcome';
+import ShowMap from './src/screens/showMap';
 
 const AppNavigator = createSwitchNavigator(
   {
@@ -34,6 +35,7 @@ const AppNavigator = createSwitchNavigator(
     GeneratePatientAccessCode,
     LookupPatientAccessCode,
     ShowAccessCode,
+    ShowMap,
   },
   {
     initialRouteName: 'HomeScreen'

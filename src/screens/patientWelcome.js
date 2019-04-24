@@ -9,7 +9,7 @@ export default class StaffLogin extends React.Component {
                 <Text style={styles.bigText}>Hi, Patient XYZ</Text>
                 <Text style={styles.smallText}>What would you like to do?</Text>
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => {}}>
+                     onPress={() => {this.props.navigation.navigate('ShowMap')}}>
                     <Text style={styles.buttonText}>See Staff's Location in Real Time</Text>
                 </TouchableOpacity>  
                 <TouchableOpacity style={styles.buttonContainer} 

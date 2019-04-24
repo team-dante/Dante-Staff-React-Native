@@ -6,7 +6,41 @@ import firebase from 'firebase';
 export default class StaffLogin extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { email: '', password: '', error: '' };
+        this.state = { email: '', password: '', error: ''};
+    }
+
+    componentWillMount() {
+        console.log("im in componentWillMount");
+
+        let firstTrigger = true;
+
+        // this will check if the user is logged in or not
+        firebase.auth().onAuthStateChanged((user) => {
+            console.log("firebase.auth().onAuthStateChanged is called...");
+            if (user && firstTrigger) {
+                const optionalConfigObject = {
+                    fallbackLabel: 'Show Passcode',
+                    unifiedErrors: false,
+                    passcodeFallback: false,
+                };
+                console.log("starting authentication");
+                TouchID.authenticate('to demo this react-native component', optionalConfigObject)
+                    .then(success => {
+                        console.log('Authenticated Successfully');
+                        console.log("success = " + success);
+                        this.props.navigation.navigate('StaffWelcome');
+                    })
+                    .catch(error => {
+                        console.log('Authentication Failed');
+                        console.log("error = " + error);
+                    });
+            }
+            else {
+                firstTrigger = false;
+                console.log("firstTrigger=" + firstTrigger);
+                console.log("user is not logged in");
+            }
+        });
     }
 
     onButtonPress() {
@@ -14,10 +48,10 @@ export default class StaffLogin extends React.Component {
         const { email, password } = this.state;
         console.log('email = ' + this.state.email);
         console.log('password = ' + this.state.password);
-        
+
         firebase.auth().signInWithEmailAndPassword(email, password)
-            .then( (user) => { this.onLoginSuccess.bind(this)(user); })
-            .catch( (error) => {
+            .then((user) => { this.onLoginSuccess.bind(this)(user); })
+            .catch((error) => {
                 this.onLoginFailure.bind(this)(error);
             });
     }
@@ -59,39 +93,6 @@ export default class StaffLogin extends React.Component {
         }
     }
 
-    _pressHandler() {
-
-        const optionalConfigObject = {
-            unifiedErrors: false, // use unified error messages (default false)
-            passcodeFallback: false // if true is passed, itwill allow isSupported to return an error if the device is not enrolled in touch id/face id etc. Otherwise, it will just tell you what method is supported, even if the user is not enrolled.  (default false)
-        }
-
-        TouchID.isSupported(optionalConfigObject)
-            .then(biometryType => {
-                // Success code
-                TouchID.authenticate('to demo this react-native component', optionalConfigObject)
-                    // any kind of error you have inside the then() callback it will be caught by the "catch" callback
-                    .then(success => {
-                        console.log('Authenticated Successfully');
-                        console.log("success = " + success);
-                        this.props.navigation.navigate('StaffWelcome');
-                    })
-                    .catch(error => {
-                        console.log('Authentication Failed');
-                        console.log("error = " + error);
-                    });
-                if (biometryType === 'FaceID') {
-                    console.log('FaceID is supported.');
-                } else {
-                    console.log('TouchID is supported.');
-                }
-            })
-            .catch(error => {
-                // Failure code
-                console.log(error);
-            });
-    }
-
     render() {
 
         return (
@@ -110,13 +111,8 @@ export default class StaffLogin extends React.Component {
                     autoCapitalize="none"
                     onChangeText={password => this.setState({ password })}
                     value={this.state.password} />
-
+                <Text>Future sign in will use Touch/Face ID</Text>
                 {this.renderButton()}
-
-                <TouchableOpacity style={styles.buttonContainer}
-                    onPress={this._pressHandler.bind(this)}>
-                    <Text style={styles.buttonText}>Login with Face/Touch ID</Text>
-                </TouchableOpacity>
 
                 <Text style={styles.errorTextStyle}>
                     {this.state.error}

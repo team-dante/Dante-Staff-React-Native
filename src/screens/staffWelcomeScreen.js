@@ -1,8 +1,27 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Alert} from 'react-native';
+import firebase from 'firebase';
 
 export default class StaffLogin extends React.Component {
+    logOut() {
+        Alert.alert(
+            'Warning',
+            'Signing out will disable Face/Touch ID for future login. You will have to type credentials manually to sign in.',
+            [
+                {text: "Sign me out", onPress: () => {
+                    firebase.auth().signOut()
+                    .then( () => { console.log("sign out successfully."); } )
+                    .catch( (error) => {
+                        console.log(error);
+                    })
+                    this.props.navigation.navigate('HomeScreen');
+                } },
+                {text: "Don't sign me out", onDismiss: () => {} }
+            ]
+        );
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -17,7 +36,7 @@ export default class StaffLogin extends React.Component {
                     <Text style={styles.buttonText}>Look up Patient's Access Code</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => this.props.navigation.navigate('HomeScreen')}>
+                     onPress={ this.logOut.bind(this) }>
                     <Text style={styles.buttonText}>Log out</Text>
                 </TouchableOpacity> 
             </View>

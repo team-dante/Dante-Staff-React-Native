@@ -18,7 +18,7 @@ export default class PatientLogin extends React.Component {
                     .then(success => {
                         console.log('Authenticated Successfully');
                         console.log("success = " + success);
-                        this.props.navigation.navigate('StaffWelcome');
+                        this.props.navigation.navigate('PatientWelcome');
                     })
                     .catch(error => {
                         console.log('Authentication Failed');

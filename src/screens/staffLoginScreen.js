@@ -6,7 +6,7 @@ import firebase from 'firebase';
 export default class StaffLogin extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { email: '', password: '', error: ''};
+        this.state = { email: '', password: '', error: '', loading: ''};
     }
 
     componentWillMount() {
@@ -23,6 +23,7 @@ export default class StaffLogin extends React.Component {
                     unifiedErrors: false,
                     passcodeFallback: false,
                 };
+                console.log("user is logged in")
                 console.log("starting authentication");
                 TouchID.authenticate('to demo this react-native component', optionalConfigObject)
                     .then(success => {
@@ -97,7 +98,7 @@ export default class StaffLogin extends React.Component {
 
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Username</Text>
+                <Text style={styles.text}>Email</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}

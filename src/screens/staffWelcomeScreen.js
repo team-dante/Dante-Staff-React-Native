@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Alert} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Alert, } from 'react-native';
 import firebase from 'firebase';
 
 export default class StaffLogin extends React.Component {
@@ -29,11 +29,11 @@ export default class StaffLogin extends React.Component {
                 <Text style={styles.smallText}>What would you like to do?</Text>
                 <TouchableOpacity style={styles.buttonContainer} 
                      onPress={() => this.props.navigation.navigate('GeneratePatientAccessCode')}>
-                    <Text style={styles.buttonText}>Generate Patient's Access Code</Text>
+                    <Text style={styles.buttonText}>Generate Patient's Account</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 
                      onPress={() => this.props.navigation.navigate('LookupPatientAccessCode')}>
-                    <Text style={styles.buttonText}>Look up Patient's Access Code</Text>
+                    <Text style={styles.buttonText}>Look up Patient's Account</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 
                      onPress={ this.logOut.bind(this) }>

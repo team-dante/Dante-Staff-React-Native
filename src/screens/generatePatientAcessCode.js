@@ -1,23 +1,97 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, TextInput} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator} from 'react-native';
+import firebase from 'firebase';
 
 export default class GeneratePatientAccessCode extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            firstName: '', lastName: '', patientEmail: '', patientPassword: '', error: '', loading: ''
+        };
+    }
+    
+    generatePatientAccount() {
+        this.setState({ error: '', loading: true });
+        const { firstName, lastName, patientEmail, patientPassword } = this.state;
+
+        let fullName = firstName + lastName;
+        firebase.database().ref('PatientAccounts/').push({
+            firstName: firstName,
+            lastName: lastName,
+            email: patientEmail,
+            password: patientPassword,
+            fullName: fullName,
+        }).then((data) => {
+            console.log("data = " + data);
+        }).catch((error) => {
+            console.log("error = " + error);
+        })
+
+        Alert.alert(
+            'Confirmation',
+            'Patient\'s account is created',
+            [
+                { text: "Close", onPress: () => { this.props.navigation.navigate('StaffWelcome') } }
+            ]
+        )
+
+        this.setState({
+            patientEmail: '', patientPassword: ''
+        });
+    }
+
+    renderButton() {
+        if (this.state.loading) {
+            return (
+                <View>
+                    <ActivityIndicator size={"small"} />
+                </View>
+            )
+        }
+        else 
+        {
+            return (
+                <TouchableOpacity style={styles.buttonContainer} 
+                    onPress={ this.generatePatientAccount.bind(this) }>
+                    <Text style={styles.buttonText}>Generate Patient Account</Text>
+                </TouchableOpacity> 
+            );
+        }
+    }
+
     render() {
         return(
             <View style={styles.container}>
-                {/* Dr. Roa has his own patient ID database. 
-                We use Dr. Roa patient ID so both of our database matches. */}
-                <Text style={styles.text}>Patient ID</Text>
-                <TextInput style = {styles.input} />
-                <Text style={styles.text}>First Name</Text>
-                <TextInput style = {styles.input} />
-                <Text style={styles.text}>Last Name</Text>
-                <TextInput style = {styles.input} />
-                <TouchableOpacity style={styles.buttonContainer} 
-                    onPress={() => this.props.navigation.navigate('ShowAccessCode')}>
-                    <Text  style={styles.buttonText}>Generate Access Code</Text>
-                </TouchableOpacity> 
+                <Text style={styles.text}>Patient's First Name</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={ firstName => this.setState({ firstName })}
+                    value={this.state.firstName} />
+                <Text style={styles.text}>Patient's Last Name</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={ lastName => this.setState({ lastName })}
+                    value={this.state.lastName} />
+                <Text style={styles.text}>Patient Email</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={ patientEmail => this.setState({ patientEmail })}
+                    value={this.state.patientEmail} />
+                <Text style={styles.text}>Patient Password</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={true}
+                    autoCapitalize="none"
+                    onChangeText={ patientPassword => this.setState({ patientPassword }) }
+                    value={this.state.patientPassword} />
+                { this.renderButton() }
             </View>
         );
     }

@@ -1,23 +1,82 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, TextInput} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Navigator } from 'react-native';
+import firebase from 'firebase';
 
 export default class LookupPatientAccessCode extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            firstName: '', lastName: '', error: '', loading: '',
+        };
+    }
+
+    lookupPatientAccount() {
+        console.log("im in lookupPatientAccount");
+
+        this.setState({ error: '', loading: true });
+        const { firstName, lastName } = this.state;
+
+        let fullName = firstName + lastName
+        firebase.database().ref('PatientAccounts/')
+            .orderByChild('fullName').equalTo(fullName)
+            .once("value", function (snapshot) {
+                if (snapshot.exists()) {
+                    console.log(snapshot.val());
+                    <Navigator
+                        initialRoute={{ title: 'Awesome Scene', index: 0 }}
+                        renderScene={(route, navigator) => <Text>Hello {route.title}!</Text>}
+                        style={{ padding: 100 }}
+                    />
+                }
+                else {
+                    console.log("There is no account associated with '" + firstName + " " + lastName + "'.")
+                }
+            }, function (error) {
+                console.log("error = " + error);
+            });
+
+        this.setState({
+            firstName: '', lastName: '',
+        });
+    }
+
+    renderButton() {
+        if (this.state.loading) {
+            return (
+                <View>
+                    <ActivityIndicator size={"small"} />
+                </View>
+            )
+        }
+        else {
+            return (
+                <TouchableOpacity style={styles.buttonContainer}
+                    onPress={this.lookupPatientAccount.bind(this)}>
+                    <Text style={styles.buttonText}>Look up Patient's Account</Text>
+                </TouchableOpacity>
+            );
+        }
+    }
+
     render() {
-        return(
+        return (
             <View style={styles.container}>
-                {/* Dr. Roa has his own patient ID database. 
-                We use Dr. Roa patient ID so both of our database matches. */}
-                <Text style={styles.text}>Patient ID</Text>
-                <TextInput style = {styles.input} />
-                <Text style={styles.text}>First Name</Text>
-                <TextInput style = {styles.input} />
-                <Text style={styles.text}>Last Name</Text>
-                <TextInput style = {styles.input} />
-                <TouchableOpacity style={styles.buttonContainer} 
-                    onPress={() => this.props.navigation.navigate('ShowAccessCode')}>
-                    <Text  style={styles.buttonText}>Look up Access Code</Text>
-                </TouchableOpacity> 
+                <Text style={styles.text}>Patient's First Name</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={firstName => this.setState({ firstName })}
+                    value={this.state.firstName} />
+                <Text style={styles.text}>Patient's Last Name</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={lastName => this.setState({ lastName })}
+                    value={this.state.lastName} />
+                {this.renderButton()}
             </View>
         );
     }
@@ -34,14 +93,14 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         paddingLeft: 60
     },
-    input:{
+    input: {
         width: 300,
         height: 40,
         borderColor: "#BEBEBE",
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginBottom: 20
     },
-    buttonContainer : {
+    buttonContainer: {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
         width: 300,

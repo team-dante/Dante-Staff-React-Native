@@ -21,25 +21,15 @@ import StaffWelcome from './src/screens/staffWelcomeScreen';
 import GeneratePatientAccessCode from './src/screens/generatePatientAcessCode';
 import LookupPatientAccessCode from './src/screens/lookupPatientAccessCode';
 import ShowStaffAccessCode from './src/screens/showStaffAcessCode';
-import ShowPatientAccessCode from './src/screens/showPatientAccessCode';
-import PatientLogin from './src/screens/patientLogin';
-import PatientWelcome from './src/screens/patientWelcome';
-import ShowMap from './src/screens/showMap';
-import PatientSignUp from './src/screens/patientSignUp';
 
 const AppNavigator = createSwitchNavigator(
   {
     HomeScreen,
     StaffLogin,
-    PatientLogin,
     StaffWelcome,
-    PatientWelcome,
     GeneratePatientAccessCode,
     LookupPatientAccessCode,
     ShowStaffAccessCode,
-    ShowMap,
-    PatientSignUp,
-    ShowPatientAccessCode
   },
   {
     initialRouteName: 'HomeScreen'

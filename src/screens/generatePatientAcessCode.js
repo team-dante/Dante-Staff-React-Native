@@ -15,7 +15,7 @@ export default class GeneratePatientAccessCode extends Component {
         this.setState({ error: '', loading: true });
         const { firstName, lastName, patientEmail, patientPassword } = this.state;
 
-        let fullName = firstName + lastName;
+        let fullName = firstName + " " + lastName;
         firebase.database().ref('PatientAccounts/').push({
             firstName: firstName,
             lastName: lastName,

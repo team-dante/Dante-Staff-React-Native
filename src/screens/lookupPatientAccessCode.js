@@ -13,24 +13,35 @@ export default class LookupPatientAccessCode extends Component {
 
     lookupPatientAccount() {
         console.log("im in lookupPatientAccount");
+        // prevent this.props loses values
+        let this_props = this.props;
+        
 
         this.setState({ error: '', loading: true });
         const { firstName, lastName } = this.state;
 
-        let fullName = firstName + lastName
+        let fullName = firstName + " " + lastName
         firebase.database().ref('PatientAccounts/')
             .orderByChild('fullName').equalTo(fullName)
             .once("value", function (snapshot) {
                 if (snapshot.exists()) {
-                    console.log(snapshot.val());
-                    <Navigator
-                        initialRoute={{ title: 'Awesome Scene', index: 0 }}
-                        renderScene={(route, navigator) => <Text>Hello {route.title}!</Text>}
-                        style={{ padding: 100 }}
-                    />
+                    let email = "";
+                    let password = "";
+                    snapshot.forEach(function(data){
+                        email = data.val().email;
+                        password = data.val().password;
+                    });
+
+                    this_props.navigation.navigate('ShowAccessCode', {
+                        none: 'false',
+                        fullName: fullName,
+                        email: email,
+                        password: password,
+                    });
                 }
                 else {
-                    console.log("There is no account associated with '" + firstName + " " + lastName + "'.")
+                    console.log("There is no account associated with '" + fullName + "'.")
+                    this_props.navigation.navigate('ShowAccessCode', {none: 'true'});
                 }
             }, function (error) {
                 console.log("error = " + error);

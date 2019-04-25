@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar } from 'react-native';
 
-export default class ShowAccessCode extends React.Component {
+export default class ShowStaffAccessCode extends React.Component {
     render() {
         let none = this.props.navigation.getParam('none', '');
         let fullName = this.props.navigation.getParam('fullName', '');
@@ -22,7 +22,7 @@ export default class ShowAccessCode extends React.Component {
         else {
             return (
                 <View style={styles.container}>
-                    <Text style={styles.bigText}>Here is the patient's account details: </Text>
+                    <Text style={styles.bigText}>Here are is patient's account details: </Text>
                     <Text style={styles.bigText}>Full Name: {JSON.stringify(fullName)}</Text>
                     <Text style={styles.bigText}>Email: {JSON.stringify(email)}</Text>
                     <Text style={styles.bigText}>Password: {JSON.stringify(password)}</Text>

@@ -1,38 +1,31 @@
-'use strict';
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Navigator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import firebase from 'firebase';
 
-export default class LookupPatientAccessCode extends Component {
+export default class PatientSignUp extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            firstName: '', lastName: '', error: '', loading: '',
-        };
+        this.state = { email: '', password: '', error: '', loading: '' };
     }
 
-    lookupPatientAccount() {
-        console.log("im in lookupPatientAccount");
+    activateAccount() {
+        const { email } = this.state;
         // prevent this.props loses values
         let this_props = this.props;
-        
 
         this.setState({ error: '', loading: true });
-        const { firstName, lastName } = this.state;
-
-        let fullName = firstName + " " + lastName
         firebase.database().ref('PatientAccounts/')
-            .orderByChild('fullName').equalTo(fullName)
+            .orderByChild('email').equalTo(email)
             .once("value", function (snapshot) {
                 if (snapshot.exists()) {
-                    let email = "";
+                    let fullName = "";
                     let password = "";
-                    snapshot.forEach(function(data){
-                        email = data.val().email;
+                    snapshot.forEach(function (data) {
+                        fullName = data.val().fullName;
                         password = data.val().password;
                     });
 
-                    this_props.navigation.navigate('ShowStaffAccessCode', {
+                    this_props.navigation.navigate('ShowPatientAccessCode', {
                         none: 'false',
                         fullName: fullName,
                         email: email,
@@ -40,16 +33,13 @@ export default class LookupPatientAccessCode extends Component {
                     });
                 }
                 else {
-                    console.log("There is no account associated with '" + fullName + "'.")
-                    this_props.navigation.navigate('ShowStaffAccessCode', {none: 'true'});
+                    console.log("There is no account associated with '" + email + "'.")
+                    this_props.navigation.navigate('ShowPatientAccessCode', { none: 'true' });
                 }
             }, function (error) {
                 console.log("error = " + error);
             });
 
-        this.setState({
-            firstName: '', lastName: '',
-        });
     }
 
     renderButton() {
@@ -59,34 +49,28 @@ export default class LookupPatientAccessCode extends Component {
                     <ActivityIndicator size={"small"} />
                 </View>
             )
-        }
-        else {
+        } else {
             return (
                 <TouchableOpacity style={styles.buttonContainer}
-                    onPress={this.lookupPatientAccount.bind(this)}>
-                    <Text style={styles.buttonText}>Look up Patient's Account</Text>
+                    onPress={this.activateAccount.bind(this)}>
+                    <Text style={styles.buttonText}>Activate my account</Text>
                 </TouchableOpacity>
-            );
+            )
         }
     }
 
     render() {
+
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Patient's First Name</Text>
+                <Text style={styles.text}>Patient Email</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
                     autoCapitalize="none"
-                    onChangeText={firstName => this.setState({ firstName })}
-                    value={this.state.firstName} />
-                <Text style={styles.text}>Patient's Last Name</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    autoCapitalize="none"
-                    onChangeText={lastName => this.setState({ lastName })}
-                    value={this.state.lastName} />
+                    onChangeText={email => this.setState({ email })}
+                    value={this.state.email} />
+                <Text>Please enter email given to you by the staff</Text>
                 {this.renderButton()}
             </View>
         );

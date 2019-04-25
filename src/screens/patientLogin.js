@@ -1,58 +1,88 @@
 import React, {Component} from 'react';
 import {View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar} from 'react-native';
 import TouchID from 'react-native-touch-id';
+import firebase from 'firebase';
 
 export default class PatientLogin extends React.Component {
-    _pressHandler() {
+    constructor(props) {
+        super(props);
+        this.state = { email: '', password: '', error: '', loading: ''};
+    }
 
-        const optionalConfigObject = {
-            unifiedErrors: false, // use unified error messages (default false)
-            passcodeFallback: false // if true is passed, itwill allow isSupported to return an error if the device is not enrolled in touch id/face id etc. Otherwise, it will just tell you what method is supported, even if the user is not enrolled.  (default false)
-        }
 
-        TouchID.isSupported(optionalConfigObject)
-            .then(biometryType => {
-                // Success code
-                TouchID.authenticate('to demo this react-native component', optionalConfigObject)
-                    // any kind of error you have inside the then() callback it will be caught by the "catch" callback
-                    .then(success => {
-                        console.log('Authenticated Successfully');
-                        console.log("success = " + success);
-                        this.props.navigation.navigate('PatientWelcome');
-                    })
-                    .catch(error => {
-                        console.log('Authentication Failed');
-                        console.log("error = " + error);
-                    });
-                if (biometryType === 'FaceID') {
-                    console.log('FaceID is supported.');
-                } else {
-                    console.log('TouchID is supported.');
-                }
-            })
-            .catch(error => {
-                // Failure code
-                console.log(error);
+    onButtonPress() {
+        this.setState({ error: '', loading: true })
+        const { email, password } = this.state;
+        console.log('email = ' + this.state.email);
+        console.log('password = ' + this.state.password);
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((user) => { this.onLoginSuccess.bind(this)(user); })
+            .catch((error) => {
+                this.onLoginFailure.bind(this)(error);
             });
+    }
+    onLoginSuccess(user) {
+        console.log("SUCCESS");
+        console.log(user)
+        this.setState({
+            email: '', password: '', error: '', loading: false
+        });
+        this.props.navigation.navigate('PatientWelcome');
+    }
+
+    onLoginFailure(errorParam) {
+        console.log("FAILURE");
+
+        let errorCode = errorParam.code;
+        let errorMessage = errorParam.message;
+
+        console.log("errorCode = " + errorCode);
+        console.log("errorMessage = " + errorMessage);
+
+        this.setState({ error: errorMessage, loading: false });
+    }
+
+    renderButton() {
+        if (this.state.loading) {
+            return (
+                <View>
+                    <ActivityIndicator size={"small"} />
+                </View>
+            )
+        } else {
+            return (
+                <TouchableOpacity style={styles.buttonContainer}
+                    onPress={this.onButtonPress.bind(this)}>
+                    <Text style={styles.buttonText}>Login</Text>
+                </TouchableOpacity>
+            )
+        }
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>First Name</Text>
-                <TextInput style = {styles.input} />
-                <Text style={styles.text}>Last Name</Text>
-                <TextInput style = {styles.input} /> 
-                <Text style={styles.text}>Patient's Access Code</Text>
-                <TextInput style = {styles.input} 
-                secureTextEntry/>
-                <TouchableOpacity style={styles.buttonContainer} 
-                    onPress={() => this.props.navigation.navigate('PatientWelcome')}>
-                    <Text  style={styles.buttonText}>Login</Text>
-                </TouchableOpacity> 
+                <Text style={styles.text}>Patient Email</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={email => this.setState({ email })}
+                    value={this.state.email} />
+                <Text style={styles.text}>Patient Password</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={true}
+                    autoCapitalize="none"
+                    onChangeText={password => this.setState({ password })}
+                    value={this.state.password} />
+                <Text>Future sign in will use Touch/Face ID</Text>
+                {this.renderButton()}
+                <Text>New User?</Text>
                 <TouchableOpacity style={styles.buttonContainer}
-                    onPress={ this._pressHandler.bind(this) }>
-                    <Text style={styles.buttonText}>Login with Face/Touch ID</Text>
+                    onPress={this.props.navigation.navigate('PatientSignUp')}>
+                    <Text style={styles.buttonText}>Activate my account</Text>
                 </TouchableOpacity>
             </View>
         );

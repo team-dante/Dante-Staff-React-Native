@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
-export default class StaffLogin extends React.Component {
+export default class PatientWelcome extends React.Component {
     render() {
         return (
             <View style={styles.container}>

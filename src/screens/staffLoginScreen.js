@@ -98,14 +98,14 @@ export default class StaffLogin extends React.Component {
 
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Email</Text>
+                <Text style={styles.text}>Staff Email</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
                     autoCapitalize="none"
                     onChangeText={email => this.setState({ email })}
                     value={this.state.email} />
-                <Text style={styles.text}>Password</Text>
+                <Text style={styles.text}>Staff Password</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={true}

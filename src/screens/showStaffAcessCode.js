@@ -22,7 +22,7 @@ export default class ShowStaffAccessCode extends React.Component {
         else {
             return (
                 <View style={styles.container}>
-                    <Text style={styles.bigText}>Here are is patient's account details: </Text>
+                    <Text style={styles.bigText}>Here is patient's account details: </Text>
                     <Text style={styles.bigText}>Full Name: {JSON.stringify(fullName)}</Text>
                     <Text style={styles.bigText}>Email: {JSON.stringify(email)}</Text>
                     <Text style={styles.bigText}>Password: {JSON.stringify(password)}</Text>

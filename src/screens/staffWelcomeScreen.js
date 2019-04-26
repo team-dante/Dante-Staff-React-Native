@@ -28,11 +28,11 @@ export default class StaffLogin extends React.Component {
                 <Text style={styles.bigText}>Hi, Staff XYZ</Text>
                 <Text style={styles.smallText}>What would you like to do?</Text>
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => this.props.navigation.navigate('GeneratePatientAccessCode')}>
+                     onPress={() => this.props.navigation.navigate('GeneratePatientAccount')}>
                     <Text style={styles.buttonText}>Generate Patient's Account</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => this.props.navigation.navigate('LookupPatientAccessCode')}>
+                     onPress={() => this.props.navigation.navigate('LookupPatientAccount')}>
                     <Text style={styles.buttonText}>Look up Patient's Account</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 

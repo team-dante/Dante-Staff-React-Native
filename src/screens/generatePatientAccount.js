@@ -3,25 +3,23 @@ import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator} from 'react-native';
 import firebase from 'firebase';
 
-export default class GeneratePatientAccessCode extends Component {
+export default class GeneratePatientAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            firstName: '', lastName: '', patientEmail: '', patientPassword: '', error: '', loading: ''
+            firstName: '', lastName: '', patientPhoneNumber: '', patientPin: '', error: '', loading: ''
         };
     }
     
     generatePatientAccount() {
         this.setState({ error: '', loading: true });
-        const { firstName, lastName, patientEmail, patientPassword } = this.state;
-
-        let fullName = firstName + " " + lastName;
+        let { firstName, lastName, patientPhoneNumber, patientPin } = this.state;
+        
         firebase.database().ref('PatientAccounts/').push({
             firstName: firstName,
             lastName: lastName,
-            email: patientEmail,
-            password: patientPassword,
-            fullName: fullName,
+            patientPhoneNumber: patientPhoneNumber,
+            patientPin: patientPin,
         }).then((data) => {
             console.log("data = " + data);
         }).catch((error) => {
@@ -37,7 +35,7 @@ export default class GeneratePatientAccessCode extends Component {
         )
 
         this.setState({
-            patientEmail: '', patientPassword: ''
+            patientPhoneNumber: '', patientPin: ''
         });
     }
 
@@ -67,30 +65,28 @@ export default class GeneratePatientAccessCode extends Component {
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
-                    autoCapitalize="none"
                     onChangeText={ firstName => this.setState({ firstName })}
                     value={this.state.firstName} />
                 <Text style={styles.text}>Patient's Last Name</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
-                    autoCapitalize="none"
                     onChangeText={ lastName => this.setState({ lastName })}
                     value={this.state.lastName} />
-                <Text style={styles.text}>Patient Email</Text>
+                <Text style={styles.text}>Patient's Phone Number</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
                     autoCapitalize="none"
-                    onChangeText={ patientEmail => this.setState({ patientEmail })}
-                    value={this.state.patientEmail} />
-                <Text style={styles.text}>Patient Password</Text>
+                    onChangeText={ patientPhoneNumber => this.setState({ patientPhoneNumber })}
+                    value={this.state.patientPhoneNumber} />
+                <Text style={styles.text}>6-digit PIN</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={true}
                     autoCapitalize="none"
-                    onChangeText={ patientPassword => this.setState({ patientPassword }) }
-                    value={this.state.patientPassword} />
+                    onChangeText={ patientPin => this.setState({ patientPin }) }
+                    value={this.state.patientPin} />
                 { this.renderButton() }
             </View>
         );

@@ -18,18 +18,18 @@ import firebase from 'firebase';
 import HomeScreen from './src/screens/homeScreen';
 import StaffLogin from './src/screens/staffLoginScreen';
 import StaffWelcome from './src/screens/staffWelcomeScreen';
-import GeneratePatientAccessCode from './src/screens/generatePatientAcessCode';
-import LookupPatientAccessCode from './src/screens/lookupPatientAccessCode';
-import ShowStaffAccessCode from './src/screens/showStaffAcessCode';
+import GeneratePatientAccount from './src/screens/generatePatientAccount';
+import LookupPatientAccount from './src/screens/lookupPatientAccount';
+import ShowPatientAccount from './src/screens/showPatientAccount';
 
 const AppNavigator = createSwitchNavigator(
   {
     HomeScreen,
     StaffLogin,
     StaffWelcome,
-    GeneratePatientAccessCode,
-    LookupPatientAccessCode,
-    ShowStaffAccessCode,
+    GeneratePatientAccount,
+    LookupPatientAccount,
+    ShowPatientAccount,
   },
   {
     initialRouteName: 'HomeScreen'

@@ -6,6 +6,7 @@ import firebase from 'firebase';
 export default class StaffLogin extends React.Component {
     constructor(props) {
         super(props);
+        // email = phoneNumber + @email.com
         this.state = { email: '', password: '', error: '', loading: ''};
     }
 
@@ -46,9 +47,10 @@ export default class StaffLogin extends React.Component {
 
     onButtonPress() {
         this.setState({ error: '', loading: true })
-        const { email, password } = this.state;
-        console.log('email = ' + this.state.email);
-        console.log('password = ' + this.state.password);
+        let { email, password } = this.state;
+        email += "@email.com";
+        console.log('email = ' + email);
+        console.log('password = ' + password);
 
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then((user) => { this.onLoginSuccess.bind(this)(user); })
@@ -98,14 +100,14 @@ export default class StaffLogin extends React.Component {
 
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Staff Email</Text>
+                <Text style={styles.text}>Staff's Phone Number</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
                     autoCapitalize="none"
                     onChangeText={email => this.setState({ email })}
                     value={this.state.email} />
-                <Text style={styles.text}>Staff Password</Text>
+                <Text style={styles.text}> 6-digit PIN</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={true}

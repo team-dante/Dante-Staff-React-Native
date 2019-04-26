@@ -3,11 +3,12 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Navigator } from 'react-native';
 import firebase from 'firebase';
 
-export default class LookupPatientAccessCode extends Component {
+export default class LookupPatientAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            firstName: '', lastName: '', error: '', loading: '',
+            // patientPhoneNumber = phoneNumber + @email.com
+            phoneNumber: '', error: '', loading: '',
         };
     }
 
@@ -15,40 +16,42 @@ export default class LookupPatientAccessCode extends Component {
         console.log("im in lookupPatientAccount");
         // prevent this.props loses values
         let this_props = this.props;
-        
+
 
         this.setState({ error: '', loading: true });
-        const { firstName, lastName } = this.state;
-
-        let fullName = firstName + " " + lastName
+        let { phoneNumber } = this.state;
+        
         firebase.database().ref('PatientAccounts/')
-            .orderByChild('fullName').equalTo(fullName)
+            .orderByChild('patientPhoneNumber').equalTo(phoneNumber)
             .once("value", function (snapshot) {
                 if (snapshot.exists()) {
-                    let email = "";
-                    let password = "";
-                    snapshot.forEach(function(data){
-                        email = data.val().email;
-                        password = data.val().password;
+                    let firstName = '';
+                    let lastName = '';
+                    let patientPin = "";
+                    snapshot.forEach(function (data) {
+                        firstName = data.val().firstName;
+                        lastName = data.val().lastName;
+                        patientPin = data.val().patientPin;
                     });
 
-                    this_props.navigation.navigate('ShowStaffAccessCode', {
+                    this_props.navigation.navigate('ShowPatientAccount', {
                         none: 'false',
-                        fullName: fullName,
-                        email: email,
-                        password: password,
+                        firstName: firstName,
+                        lastName: lastName,
+                        patientPhoneNumber: phoneNumber,
+                        patientPin: patientPin,
                     });
                 }
                 else {
-                    console.log("There is no account associated with '" + fullName + "'.")
-                    this_props.navigation.navigate('ShowStaffAccessCode', {none: 'true'});
+                    console.log("There is no account associated with '" + phoneNumber + "'.")
+                    this_props.navigation.navigate('ShowPatientAccount', { none: 'true', patientPhoneNumber: phoneNumber });
                 }
             }, function (error) {
                 console.log("error = " + error);
             });
 
         this.setState({
-            firstName: '', lastName: '',
+            phoneNumber: '',
         });
     }
 
@@ -73,20 +76,13 @@ export default class LookupPatientAccessCode extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>Patient's First Name</Text>
+                <Text style={styles.text}>Patient's Phone Number</Text>
                 <TextInput
                     style={styles.input}
                     secureTextEntry={false}
                     autoCapitalize="none"
-                    onChangeText={firstName => this.setState({ firstName })}
-                    value={this.state.firstName} />
-                <Text style={styles.text}>Patient's Last Name</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    autoCapitalize="none"
-                    onChangeText={lastName => this.setState({ lastName })}
-                    value={this.state.lastName} />
+                    onChangeText={phoneNumber => this.setState({ phoneNumber })}
+                    value={this.state.phoneNumber} />
                 {this.renderButton()}
             </View>
         );

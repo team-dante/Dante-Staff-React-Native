@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar } from 'react-native';
 
-export default class ShowStaffAccessCode extends React.Component {
+export default class ShowPatientAccount extends React.Component {
     render() {
         let none = this.props.navigation.getParam('none', '');
-        let fullName = this.props.navigation.getParam('fullName', '');
-        let email = this.props.navigation.getParam('email', '');
-        let password = this.props.navigation.getParam('password', '');
+        let firstName = this.props.navigation.getParam('firstName', '');
+        let lastName = this.props.navigation.getParam('lastName', '');
+        let patientPhoneNumber = this.props.navigation.getParam('patientPhoneNumber', '');
+        let patientPin = this.props.navigation.getParam('patientPin', '');
 
         if (none == 'true') {
             return (
                 <View style={styles.container}>
-                    <Text style={styles.bigText}>No patient's account found. </Text>
+                    <Text style={styles.bigText}>There is no account associated with {JSON.stringify(patientPhoneNumber)} </Text>
                     <TouchableOpacity style={styles.buttonContainer}
                         onPress={() => this.props.navigation.navigate('StaffWelcome')}>
                         <Text style={styles.buttonText}>Return to Staff Menu</Text>
@@ -23,9 +24,10 @@ export default class ShowStaffAccessCode extends React.Component {
             return (
                 <View style={styles.container}>
                     <Text style={styles.bigText}>Here is patient's account details: </Text>
-                    <Text style={styles.bigText}>Full Name: {JSON.stringify(fullName)}</Text>
-                    <Text style={styles.bigText}>Email: {JSON.stringify(email)}</Text>
-                    <Text style={styles.bigText}>Password: {JSON.stringify(password)}</Text>
+                    <Text style={styles.bigText}>First name: {JSON.stringify(firstName)}</Text>
+                    <Text style={styles.bigText}>Last name: {JSON.stringify(lastName)}</Text>
+                    <Text style={styles.bigText}>Phone number: {JSON.stringify(patientPhoneNumber)}</Text>
+                    <Text style={styles.bigText}>6-digit pin: {JSON.stringify(patientPin)}</Text>
                     <TouchableOpacity style={styles.buttonContainer}
                         onPress={() => this.props.navigation.navigate('StaffWelcome')}>
                         <Text style={styles.buttonText}>Return to Staff Menu</Text>

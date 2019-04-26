@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Dante App.app"
+               BuildableName = "Dante Staff.app"
                BlueprintName = "Dante Staff"
                ReferencedContainer = "container:Dante Staff.xcodeproj">
             </BuildableReference>
@@ -71,7 +71,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Dante App.app"
+            BuildableName = "Dante Staff.app"
             BlueprintName = "Dante Staff"
             ReferencedContainer = "container:Dante Staff.xcodeproj">
          </BuildableReference>
@@ -94,7 +94,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Dante App.app"
+            BuildableName = "Dante Staff.app"
             BlueprintName = "Dante Staff"
             ReferencedContainer = "container:Dante Staff.xcodeproj">
          </BuildableReference>
@@ -120,7 +120,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Dante App.app"
+            BuildableName = "Dante Staff.app"
             BlueprintName = "Dante Staff"
             ReferencedContainer = "container:Dante Staff.xcodeproj">
          </BuildableReference>

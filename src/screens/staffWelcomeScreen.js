@@ -1,44 +1,47 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Alert, } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
 import firebase from 'firebase';
+import { Actions } from 'react-native-router-flux';
 
-export default class StaffLogin extends React.Component {
-    logOut() {
-        Alert.alert(
-            'Warning',
-            'Signing out will disable Face/Touch ID for future login. You will have to type credentials manually to sign in.',
-            [
-                {text: "Sign me out", onPress: () => {
-                    firebase.auth().signOut()
-                    .then( () => { console.log("sign out successfully."); } )
-                    .catch( (error) => {
-                        console.log(error);
-                    })
-                    this.props.navigation.navigate('HomeScreen');
-                } },
-                {text: "Don't sign me out", onDismiss: () => {} }
-            ]
-        );
+class StaffWelcome extends Component {
+    constructor(props) {
+        super(props);
+        // email = phoneNumber + @email.com
+        this.state = { staffName: ''};
+    }
+    componentDidMount() {
+        // locate current user's phone num
+        let user = firebase.auth().currentUser;
+        let phoneNum = user.email.split("@")[0];
+        // this keyword would not work under callback fxn
+        var self = this;
+
+        // search for the staff obj that has the same phoneNum as currentUser has
+        firebase.database().ref(`/staffs/`).orderByChild("phoneNum").equalTo(phoneNum)
+            .once('value', function(snapshot) {
+                let firstName = '';
+                snapshot.forEach(function (data) {
+                    firstName = data.val().firstName;
+                });
+                self.setState({staffName: firstName});
+            });
     }
 
     render() {
+        const { staffName } = this.state;
         return (
             <View style={styles.container}>
-                <Text style={styles.bigText}>Hi, Staff XYZ</Text>
-                <Text style={styles.smallText}>What would you like to do?</Text>
+                <Text style={styles.topText}>Greetings, Staff {staffName}</Text>
+                <Text style={styles.header}>Services for Patients</Text>
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => this.props.navigation.navigate('GeneratePatientAccount')}>
+                     onPress={() => Actions.generatePatientAccount()}>
                     <Text style={styles.buttonText}>Generate Patient's Account</Text>
                 </TouchableOpacity> 
                 <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={() => this.props.navigation.navigate('LookupPatientAccount')}>
+                     onPress={() => Actions.lookupPatientAccount()}>
                     <Text style={styles.buttonText}>Look up Patient's Account</Text>
-                </TouchableOpacity> 
-                <TouchableOpacity style={styles.buttonContainer} 
-                     onPress={ this.logOut.bind(this) }>
-                    <Text style={styles.buttonText}>Log out</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>
             </View>
         );
     }
@@ -47,32 +50,41 @@ export default class StaffLogin extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        paddingTop: 40,
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#fcfcfc'
     },
-    bigText: {
+    topText: {
+        alignSelf: 'flex-start',
+        paddingLeft: 35,
+        fontSize: 18,
+        color: '#96A0AF',
+        margin: 5
+    },
+    header: {
+        alignSelf: 'flex-start',
+        paddingVertical: 30,
+        paddingLeft: 40,
         fontSize: 30,
-        textAlign: 'center',
-        margin: 10,
-    },
-    smallText: {
-        fontSize: 15,
-        textAlign: 'center',
-        color: '#333333',
-        margin: 10,
+        fontWeight: 'bold',
+        textShadowColor: '#c4c4c4',
+        textShadowOffset: { width: 1, height: 0 },
+        textShadowRadius: 2
     },
     buttonContainer : {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
-        width: 300,
-        borderRadius: 4,
+        width: Dimensions.get('window').width - 80,
+        borderRadius: 8,
         borderColor: "rgba(255,255,255,0.7)",
         margin: 10,
     },
     buttonText: {
         color: "#FFF",
         textAlign: "center",
-        height: 20
+        height: 20,
+        fontWeight: 'bold'
     }
 });
+
+export default StaffWelcome;

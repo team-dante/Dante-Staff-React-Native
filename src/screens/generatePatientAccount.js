@@ -1,7 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator, Dimensions} from 'react-native';
 import firebase from 'firebase';
+import { Actions } from 'react-native-router-flux';
 
 export default class GeneratePatientAccount extends Component {
     constructor(props) {
@@ -10,33 +11,56 @@ export default class GeneratePatientAccount extends Component {
             firstName: '', lastName: '', patientPhoneNumber: '', patientPin: '', error: '', loading: ''
         };
     }
-    
+
+    hashing(key) {
+        let hashVal = 0; 
+        for (let i = 0; i < key.length; ++i)
+          hashVal = (127 * hashVal + key.charCodeAt(i)) % 16908799;
+        return hashVal;
+    }
+
     generatePatientAccount() {
         this.setState({ error: '', loading: true });
         let { firstName, lastName, patientPhoneNumber, patientPin } = this.state;
         
-        firebase.database().ref('PatientAccounts/').push({
+        let fullName = firstName + " " + lastName;
+        let genPin = this.hashing(fullName);
+
+        var self = this;
+        firebase.database().ref(`/Patients`).push({
             firstName: firstName,
             lastName: lastName,
             patientPhoneNumber: patientPhoneNumber,
-            patientPin: patientPin,
+            patientPin: genPin
         }).then((data) => {
             console.log("data = " + data);
+            Alert.alert(
+                'Confirmation',
+                'Patient\'s account is created',
+                [
+                    { text: "View Account", onPress: () => { 
+                        Actions.showAcct({
+                            firstName: firstName,
+                            lastName: lastName,
+                            patientPhoneNumber: patientPhoneNumber,
+                            patientPin: genPin
+                        }) 
+                    } }
+                ]
+            );
+            self.setState({
+                firstName: '', lastName: '', patientPhoneNumber: '', patientPin: '', error: '', loading: ''
+            });
         }).catch((error) => {
             console.log("error = " + error);
+            Alert.alert(
+                'Error',
+                'Patient\'s account is not successfully created',
+                [
+                    { text: "Close", onPress: () => {} }
+                ]
+            );
         })
-
-        Alert.alert(
-            'Confirmation',
-            'Patient\'s account is created',
-            [
-                { text: "Close", onPress: () => { this.props.navigation.navigate('StaffWelcome') } }
-            ]
-        )
-
-        this.setState({
-            patientPhoneNumber: '', patientPin: ''
-        });
     }
 
     renderButton() {
@@ -61,6 +85,7 @@ export default class GeneratePatientAccount extends Component {
     render() {
         return(
             <View style={styles.container}>
+                <Text style={styles.header}>Enter Patient Info</Text>
                 <Text style={styles.text}>Patient's First Name</Text>
                 <TextInput
                     style={styles.input}
@@ -80,13 +105,6 @@ export default class GeneratePatientAccount extends Component {
                     autoCapitalize="none"
                     onChangeText={ patientPhoneNumber => this.setState({ patientPhoneNumber })}
                     value={this.state.patientPhoneNumber} />
-                <Text style={styles.text}>6-digit PIN</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={true}
-                    autoCapitalize="none"
-                    onChangeText={ patientPin => this.setState({ patientPin }) }
-                    value={this.state.patientPin} />
                 { this.renderButton() }
             </View>
         );
@@ -94,34 +112,52 @@ export default class GeneratePatientAccount extends Component {
 }
 
 const styles = StyleSheet.create({
+    header: {
+        alignSelf: 'flex-start',
+        paddingVertical: 40,
+        paddingLeft: 40,
+        fontSize: 26,
+        fontWeight: 'bold',
+        textShadowColor: '#c4c4c4',
+        textShadowOffset: { width: 1, height: 0 },
+        textShadowRadius: 2
+    },
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        paddingTop: 40,
+        backgroundColor: '#ffffff',
     },
     text: {
         alignSelf: 'flex-start',
-        paddingLeft: 60
+        paddingLeft: 40,
+        paddingRight: 40,
+        color: '#96A0AF',
+        fontSize: 16,
+        textShadowColor: '#c4c4c4',
+        textShadowOffset: { width: 0.5, height: 0 },
+        textShadowRadius: 1,
     },
-    input:{
-        width: 300,
-        height: 40,
-        borderColor: "#BEBEBE",
+    input: {
+        width: Dimensions.get('window').width - 80,
+        height: 46,
+        borderColor: "#96A0AF",
         borderBottomWidth: StyleSheet.hairlineWidth,
-        marginBottom: 20
+        marginBottom: 20,
+        fontSize: 18
     },
     buttonContainer : {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
-        width: 300,
-        borderRadius: 4,
+        width: Dimensions.get('window').width - 80,
+        borderRadius: 8,
         borderColor: "rgba(255,255,255,0.7)",
         margin: 10,
     },
     buttonText: {
         color: "#FFF",
         textAlign: "center",
-        height: 20
+        height: 20,
+        fontWeight: 'bold'
     }
 });

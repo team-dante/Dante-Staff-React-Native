@@ -1,58 +1,61 @@
 'use strict';
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Navigator } from 'react-native';
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import firebase from 'firebase';
+import { Actions } from 'react-native-router-flux';
 
 export default class LookupPatientAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
             // patientPhoneNumber = phoneNumber + @email.com
-            phoneNumber: '', error: '', loading: '',
+            phoneNumber: '', error: '', loading: ''
         };
     }
 
     lookupPatientAccount() {
         console.log("im in lookupPatientAccount");
-        // prevent this.props loses values
-        let this_props = this.props;
-
 
         this.setState({ error: '', loading: true });
         let { phoneNumber } = this.state;
         
-        firebase.database().ref('PatientAccounts/')
-            .orderByChild('patientPhoneNumber').equalTo(phoneNumber)
-            .once("value", function (snapshot) {
-                if (snapshot.exists()) {
-                    let firstName = '';
-                    let lastName = '';
-                    let patientPin = "";
-                    snapshot.forEach(function (data) {
-                        firstName = data.val().firstName;
-                        lastName = data.val().lastName;
-                        patientPin = data.val().patientPin;
-                    });
+        var self = this;
+        firebase.database().ref(`/Patients`)
+            .orderByChild("patientPhoneNumber").equalTo(phoneNumber)
+            .once('value', function(snapshot) {
+                let firstName = '';
+                let lastName = '';
+                let patientPin = '';
+                let founded = false;
 
-                    this_props.navigation.navigate('ShowPatientAccount', {
-                        none: 'false',
+                // if founded
+                snapshot.forEach(function(data) {
+                    firstName = data.val().firstName;
+                    lastName = data.val().lastName;
+                    patientPin = data.val().patientPin;
+                    Actions.showAcct({
                         firstName: firstName,
                         lastName: lastName,
                         patientPhoneNumber: phoneNumber,
-                        patientPin: patientPin,
+                        patientPin: patientPin
                     });
+                    founded = true;
+                });
+                // if not founded; display an alert box, clear fields
+                if (!founded) {
+                    Alert.alert(
+                        'Warning',
+                        'Patient\'s account cannot be found',
+                        [
+                            { text: "Close", onPress: ()=> {
+                                self.setState({phoneNumber: '', loading: false});
+                            }}
+                        ]
+                    );
                 }
-                else {
-                    console.log("There is no account associated with '" + phoneNumber + "'.")
-                    this_props.navigation.navigate('ShowPatientAccount', { none: 'true', patientPhoneNumber: phoneNumber });
-                }
-            }, function (error) {
+            }, function(error) {
                 console.log("error = " + error);
             });
-
-        this.setState({
-            phoneNumber: '',
-        });
     }
 
     renderButton() {
@@ -92,32 +95,40 @@ export default class LookupPatientAccount extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        justifyContent: 'center',
+        backgroundColor: '#ffffff',
     },
     text: {
         alignSelf: 'flex-start',
-        paddingLeft: 60
+        paddingLeft: 40,
+        paddingRight: 40,
+        color: '#96A0AF',
+        fontSize: 16,
+        textShadowColor: '#c4c4c4',
+        textShadowOffset: { width: 0.5, height: 0 },
+        textShadowRadius: 1,
     },
     input: {
-        width: 300,
-        height: 40,
-        borderColor: "#BEBEBE",
+        width: Dimensions.get('window').width - 80,
+        height: 46,
+        borderColor: "#96A0AF",
         borderBottomWidth: StyleSheet.hairlineWidth,
-        marginBottom: 20
+        marginBottom: 20,
+        fontSize: 18
     },
-    buttonContainer: {
+    buttonContainer : {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
-        width: 300,
-        borderRadius: 4,
+        width: Dimensions.get('window').width - 80,
+        borderRadius: 8,
         borderColor: "rgba(255,255,255,0.7)",
         margin: 10,
     },
     buttonText: {
         color: "#FFF",
         textAlign: "center",
-        height: 20
+        height: 20,
+        fontWeight: 'bold'
     }
 });

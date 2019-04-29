@@ -24,7 +24,7 @@ export default class GeneratePatientAccount extends Component {
         let { firstName, lastName, patientPhoneNumber, patientPin } = this.state;
         
         let fullName = firstName + " " + lastName;
-        let genPin = this.hashing(fullName);
+        let genPin = (this.hashing(fullName)).toString();
 
         var self = this;
         firebase.database().ref(`/Patients`).push({

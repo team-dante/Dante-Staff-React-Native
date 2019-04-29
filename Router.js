@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Scene, Router, Actions } from 'react-native-router-flux';
+import { Scene, Router, Actions, ActionConst } from 'react-native-router-flux';
 import { Alert } from 'react-native';
 import firebase from 'firebase';
 import StaffLogin from './src/screens/staffLoginScreen';
@@ -31,10 +31,11 @@ class RouterComponent extends Component {
         return (
             <Router>
                 <Scene key="root" hideNavBar>
-                    <Scene key="auth" hideNavBar>
-                        <Scene key="login" component={StaffLogin} title="Please Login" initial/>
+                    <Scene key="auth" hideNavBar type={ActionConst.RESET}>
+                        <Scene key="login" component={StaffLogin} 
+                            title="Please Login" initial/>
                     </Scene>
-                    <Scene key="main">
+                    <Scene key="main" type={ActionConst.RESET}>
                         <Scene 
                             leftTitle="Sign Out"
                             onLeft={() => {
@@ -44,11 +45,14 @@ class RouterComponent extends Component {
                             component={StaffWelcome} 
                             title="Home" 
                         />
-                        <Scene key="generatePatientAccount" component={GeneratePatientAccount} title="Generate Account" />
-                        <Scene key="lookupPatientAccount" component={LookupPatientAccount} title="Lookup Account" />
+                        <Scene key="generatePatientAccount" component={GeneratePatientAccount} 
+                            title="Generate Account" />
+                        <Scene key="lookupPatientAccount" component={LookupPatientAccount} 
+                            title="Lookup Account" />
                     </Scene>
-                    <Scene key="showAcct">
-                        <Scene key="showPatientAccount" component={ShowPatientAccount} title="Show Account" />
+                    <Scene key="showAcct" type={ActionConst.RESET}>
+                        <Scene key="showPatientAccount" component={ShowPatientAccount} 
+                            title="Show Account"/>
                     </Scene>
                 </Scene>
             </Router>

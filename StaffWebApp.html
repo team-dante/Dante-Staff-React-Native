@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <title>Staff Record Form</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+      <style>
+        body {
+          width: 50%;
+          margin: auto;
+          padding-top: 30px;
+        }
+        #pin {
+          margin-top: 10px;
+          padding: 10px;
+          border-radius: 5px;
+          /* background-color: #f1f1f1; */
+          font-family: "Courier New";
+          font-weight: bold;
+        }
+      </style>
+   </head>
+
+   <body>
+      <h3><strong>Staff Record Form</strong></h3>
+      <form id="myForm">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" class="form-control" id="firstName">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" class="form-control" id="lastName">
+        </div>
+         <!-- <button type="button" onclick="generatePin()" class="btn btn-primary">Generate PIN</button>
+         <p id="pin"></p> -->
+         <div class="form-group">
+          <label for="phoneNum">Phone Number</label>
+          <input type="text" class="form-control" id="phoneNum" placeholder="format: 2137121234">
+        </div>
+        <div class="form-group">
+          <label for="pin">PIN</label>
+          <input type="text" class="form-control" id="pin" placeholder="format: 2468">
+        </div>
+        <button type="button" onclick="submitRecord()" class="btn btn-primary submit">Submit</button>
+
+      </form>
+      
+    <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDXL3Kup10E5K2CVUARvrZej2_nGoQ51cM",
+        authDomain: "dante-app-d6cc5.firebaseapp.com",
+        databaseURL: "https://dante-app-d6cc5.firebaseio.com",
+        projectId: "dante-app-d6cc5",
+        storageBucket: "dante-app-d6cc5.appspot.com",
+        messagingSenderId: "199635283277"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script>
+      function generatePin() {
+        let lastName = document.getElementById("lastName").value;
+        let firstName = document.getElementById("firstName").value;
+        let fullName = firstName + " " + lastName;
+        // var pin = hashing(fullName);
+        // document.getElementById("pin").innerHTML = pin;
+      }
+      // function hashing(key) {
+      //   let hashVal = 0; 
+      //   for (let i = 0; i < key.length; ++i)
+      //     hashVal = (127 * hashVal + key.charCodeAt(i)) % 16908799;
+      //   return hashVal;
+      // }
+      function submitRecord() {
+        let phoneNum = document.getElementById("phoneNum").value;
+        let phoneNumEmail = phoneNum + "@email.com";
+        let pin = document.getElementById("pin").value;
+        pin += "ABCDEFG";
+        var auth = firebase.auth();
+        auth.createUserWithEmailAndPassword(phoneNumEmail, pin).then(user => {
+          console.log(user);
+        });
+
+        var database = firebase.database();
+        database.ref(`/staffs`).push({
+          lastName: document.getElementById("lastName").value,
+          firstName: document.getElementById("firstName").value,
+          phoneNum: phoneNum,
+          pin: pin
+        }).then(() => {
+          document.getElementById("myForm").reset();
+          document.getElementById("pin").innerHTML = "";
+          alert("Staff has been recorded. Click OK to continue enter next staff's record");
+        });
+      }
+    </script>
+      <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+    </script>
+   </body>
+</html>

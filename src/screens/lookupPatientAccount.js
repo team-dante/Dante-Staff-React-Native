@@ -44,7 +44,7 @@ export default class LookupPatientAccount extends Component {
                 // if not founded; display an alert box, clear fields
                 if (!founded) {
                     Alert.alert(
-                        'Warning',
+                        'Error',
                         'Patient\'s account cannot be found',
                         [
                             { text: "Close", onPress: ()=> {
@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         paddingLeft: 40,
         paddingRight: 40,
-        color: '#96A0AF',
         fontSize: 16,
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 0.5, height: 0 },

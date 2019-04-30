@@ -50,21 +50,16 @@ class StaffWelcome extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 40,
+        justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fcfcfc'
     },
     topText: {
-        alignSelf: 'flex-start',
-        paddingLeft: 35,
         fontSize: 18,
-        color: '#96A0AF',
         margin: 5
     },
     header: {
-        alignSelf: 'flex-start',
-        paddingVertical: 30,
-        paddingLeft: 40,
+        paddingBottom: 30,
         fontSize: 30,
         fontWeight: 'bold',
         textShadowColor: '#c4c4c4',

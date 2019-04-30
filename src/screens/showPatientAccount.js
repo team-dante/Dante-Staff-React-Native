@@ -23,7 +23,7 @@ class ShowPatientAccount extends Component {
 const styles = StyleSheet.create({
     header: {
         alignSelf: 'flex-start',
-        paddingVertical: 30,
+        paddingBottom: 20,
         paddingLeft: 40,
         fontSize: 26,
         fontWeight: 'bold',
@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 40,
         backgroundColor: '#ffffff',
     },
     bigText: {
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
         paddingLeft: 40,
         paddingRight: 40,
         paddingVertical: 10,
-        color: '#828a96',
         fontSize: 20,
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 0.5, height: 0 },

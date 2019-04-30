@@ -8,6 +8,7 @@ class StaffLogin extends Component {
     constructor(props) {
         super(props);
         // email = phoneNumber + @email.com
+        // password = 4-digit PIN + "ABCDEFG"
         this.state = { email: '', password: '', error: '', loading: ''};
     }
 
@@ -50,6 +51,7 @@ class StaffLogin extends Component {
         this.setState({ error: '', loading: true })
         let { email, password } = this.state;
         email += "@email.com";
+        password += "ABCDEFG";
         console.log('email = ' + email);
         console.log('password = ' + password);
 
@@ -109,7 +111,7 @@ class StaffLogin extends Component {
                 <Image 
                     style={{width: 110, height: 110, borderRadius: 20}} 
                     source={require('../../appIcon/dante-staff.png')} />
-                <Text style={styles.header}>Sign In</Text>
+                <Text style={styles.header}>Dante Staff</Text>
                 <Text style={styles.text}>Staff's Phone Number</Text>
                 <TextInput
                     style={styles.input}
@@ -127,7 +129,7 @@ class StaffLogin extends Component {
                 {this.renderButton()}
                 <Text 
                     style={[styles.text, {fontSize: 14, alignItems: 'center'}]}>
-                    FaceID/TouchID will be auto-triggered once you have signed in
+                    Face ID/Touch ID will be auto-triggered once you have signed in
                 </Text>
             </View>
         );
@@ -136,15 +138,13 @@ class StaffLogin extends Component {
 
 const styles = StyleSheet.create({
     header: {
-        alignSelf: 'flex-start',
         paddingVertical: 40,
-        paddingLeft: 40,
         fontSize: 30,
         fontFamily: 'Futura',
         fontWeight: 'bold',
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 1, height: 0 },
-        textShadowRadius: 2
+        textShadowRadius: 2,
     },
     container: {
         flex: 1,
@@ -156,7 +156,6 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         paddingLeft: 40,
         paddingRight: 40,
-        color: '#96A0AF',
         fontSize: 16,
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 0.5, height: 0 },

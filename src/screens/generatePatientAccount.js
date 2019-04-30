@@ -12,26 +12,26 @@ export default class GeneratePatientAccount extends Component {
         };
     }
 
-    hashing(key) {
-        let hashVal = 0; 
-        for (let i = 0; i < key.length; ++i)
-          hashVal = (127 * hashVal + key.charCodeAt(i)) % 16908799;
-        return hashVal;
-    }
+    // hashing(key) {
+    //     let hashVal = 0; 
+    //     for (let i = 0; i < key.length; ++i)
+    //       hashVal = (127 * hashVal + key.charCodeAt(i)) % 16908799;
+    //     return hashVal;
+    // }
 
     generatePatientAccount() {
         this.setState({ error: '', loading: true });
-        let { firstName, lastName, patientPhoneNumber, patientPin } = this.state;
+        let { firstName, lastName, patientPhoneNumber, patientPin} = this.state;
         
         let fullName = firstName + " " + lastName;
-        let genPin = (this.hashing(fullName)).toString();
+        // let genPin = (this.hashing(fullName)).toString();
 
         var self = this;
         firebase.database().ref(`/Patients`).push({
             firstName: firstName,
             lastName: lastName,
             patientPhoneNumber: patientPhoneNumber,
-            patientPin: genPin
+            patientPin: patientPin
         }).then((data) => {
             console.log("data = " + data);
             Alert.alert(
@@ -43,7 +43,7 @@ export default class GeneratePatientAccount extends Component {
                             firstName: firstName,
                             lastName: lastName,
                             patientPhoneNumber: patientPhoneNumber,
-                            patientPin: genPin
+                            patientPin: patientPin
                         }) 
                     } }
                 ]
@@ -85,7 +85,7 @@ export default class GeneratePatientAccount extends Component {
     render() {
         return(
             <View style={styles.container}>
-                <Text style={styles.header}>Enter Patient Info</Text>
+                <Text style={styles.header}>Enter Patient Information</Text>
                 <Text style={styles.text}>Patient's First Name</Text>
                 <TextInput
                     style={styles.input}
@@ -105,6 +105,13 @@ export default class GeneratePatientAccount extends Component {
                     autoCapitalize="none"
                     onChangeText={ patientPhoneNumber => this.setState({ patientPhoneNumber })}
                     value={this.state.patientPhoneNumber} />
+                <Text style={styles.text}>PIN</Text>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={false}
+                    autoCapitalize="none"
+                    onChangeText={ patientPin => this.setState({ patientPin })}
+                    value={this.state.patientPin} />
                 { this.renderButton() }
             </View>
         );
@@ -113,8 +120,8 @@ export default class GeneratePatientAccount extends Component {
 
 const styles = StyleSheet.create({
     header: {
+        paddingBottom: 30,
         alignSelf: 'flex-start',
-        paddingVertical: 40,
         paddingLeft: 40,
         fontSize: 26,
         fontWeight: 'bold',
@@ -125,14 +132,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        paddingTop: 40,
+        justifyContent: 'center',
         backgroundColor: '#ffffff',
     },
     text: {
         alignSelf: 'flex-start',
         paddingLeft: 40,
         paddingRight: 40,
-        color: '#96A0AF',
         fontSize: 16,
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 0.5, height: 0 },

@@ -33,7 +33,7 @@ class StaffWelcome extends Component {
         return (
             <View style={styles.container}>
                 <Text style={styles.topText}>Greetings, Staff {staffName}</Text>
-                <Text style={styles.header}>Services for Patients</Text>
+                <Text style={styles.bottomText}>Services for Patients</Text>
                 <TouchableOpacity style={styles.buttonContainer}
                     onPress={() => Actions.generatePatientAccount()}>
                     <Text style={styles.buttonText}>Generate Patient's Account</Text>
@@ -77,15 +77,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#fcfcfc'
     },
     topText: {
-        fontSize: 18,
-        margin: 5
-    },
-    header: {
         fontSize: 30,
+        margin: 5,
         fontWeight: 'bold',
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 1, height: 0 },
         textShadowRadius: 2
+    },
+    bottomText: {
+        fontSize: 20,
+        margin: 10,
+        textAlign: "center",
     },
     buttonContainer: {
         backgroundColor: "#428AF8",

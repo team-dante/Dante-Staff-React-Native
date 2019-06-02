@@ -75,7 +75,6 @@ updateDoctorLocation(phoneNumber, roomId) {
                 ]
             )
         }
-
     }).catch((error) => {
         console.log("error updating roomId for doctor " + phoneNumber);
         console.log("error = " + error);

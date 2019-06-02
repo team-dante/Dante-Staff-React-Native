@@ -1,8 +1,9 @@
 'use strict';
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator, Dimensions} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator, Dimensions, Keyboard, SafeAreaView, Platform, KeyboardAvoidingView } from 'react-native';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 export default class GeneratePatientAccount extends Component {
     constructor(props) {
@@ -21,8 +22,8 @@ export default class GeneratePatientAccount extends Component {
 
     generatePatientAccount() {
         this.setState({ error: '', loading: true });
-        let { firstName, lastName, patientPhoneNumber, patientPin} = this.state;
-        
+        let { firstName, lastName, patientPhoneNumber, patientPin } = this.state;
+
         let fullName = firstName + " " + lastName;
         // let genPin = (this.hashing(fullName)).toString();
 
@@ -38,14 +39,16 @@ export default class GeneratePatientAccount extends Component {
                 'Confirmation',
                 'Patient\'s account is created',
                 [
-                    { text: "View Account", onPress: () => { 
-                        Actions.showAcct({
-                            firstName: firstName,
-                            lastName: lastName,
-                            patientPhoneNumber: patientPhoneNumber,
-                            patientPin: patientPin
-                        }) 
-                    } }
+                    {
+                        text: "View Account", onPress: () => {
+                            Actions.showAcct({
+                                firstName: firstName,
+                                lastName: lastName,
+                                patientPhoneNumber: patientPhoneNumber,
+                                patientPin: patientPin
+                            })
+                        }
+                    }
                 ]
             );
             self.setState({
@@ -57,7 +60,7 @@ export default class GeneratePatientAccount extends Component {
                 'Error',
                 'Patient\'s account is not successfully created',
                 [
-                    { text: "Close", onPress: () => {} }
+                    { text: "Close", onPress: () => { } }
                 ]
             );
         })
@@ -71,49 +74,63 @@ export default class GeneratePatientAccount extends Component {
                 </View>
             )
         }
-        else 
-        {
+        else {
             return (
-                <TouchableOpacity style={styles.buttonContainer} 
-                    onPress={ this.generatePatientAccount.bind(this) }>
+                <TouchableOpacity style={styles.buttonContainer}
+                    onPress={this.generatePatientAccount.bind(this)}>
                     <Text style={styles.buttonText}>Generate Patient Account</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>
             );
         }
     }
 
     render() {
-        return(
-            <View style={styles.container}>
-                <Text style={styles.header}>Enter Patient Information</Text>
-                <Text style={styles.text}>Patient's First Name</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    onChangeText={ firstName => this.setState({ firstName })}
-                    value={this.state.firstName} />
-                <Text style={styles.text}>Patient's Last Name</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    onChangeText={ lastName => this.setState({ lastName })}
-                    value={this.state.lastName} />
-                <Text style={styles.text}>Patient's Phone Number</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    autoCapitalize="none"
-                    onChangeText={ patientPhoneNumber => this.setState({ patientPhoneNumber })}
-                    value={this.state.patientPhoneNumber} />
-                <Text style={styles.text}>PIN</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    autoCapitalize="none"
-                    onChangeText={ patientPin => this.setState({ patientPin })}
-                    value={this.state.patientPin} />
-                { this.renderButton() }
-            </View>
+        const shouldSetResponse = () => true;
+        const onRelease = () => (
+            Keyboard.dismiss()
+        );
+        return (
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : null}
+                style={{ flex: 1 }} >
+                <SafeAreaView style={styles.container}>
+                    <View
+                        onResponderRelease={onRelease}
+                        onStartShouldSetResponder={shouldSetResponse}
+                        style={{ height: hp('100%') }} style={styles.inner}>
+                        <View style={styles.container}>
+                            <Text style={styles.header}>Enter Patient Information</Text>
+                            <Text style={styles.text}>Patient's First Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={false}
+                                onChangeText={firstName => this.setState({ firstName })}
+                                value={this.state.firstName} />
+                            <Text style={styles.text}>Patient's Last Name</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={false}
+                                onChangeText={lastName => this.setState({ lastName })}
+                                value={this.state.lastName} />
+                            <Text style={styles.text}>Patient's Phone Number</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={false}
+                                autoCapitalize="none"
+                                onChangeText={patientPhoneNumber => this.setState({ patientPhoneNumber })}
+                                value={this.state.patientPhoneNumber} />
+                            <Text style={styles.text}>PIN</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={false}
+                                autoCapitalize="none"
+                                onChangeText={patientPin => this.setState({ patientPin })}
+                                value={this.state.patientPin} />
+                            {this.renderButton()}
+                        </View>
+                    </View>
+                </SafeAreaView>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -129,11 +146,15 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 1, height: 0 },
         textShadowRadius: 2
     },
+    inner: {
+        paddingBottom: hp('1%'),
+        flex: 1,
+        justifyContent: "flex-end",
+    },
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: '#ffffff',
+        paddingTop: hp('5%')
     },
     text: {
         alignSelf: 'flex-start',
@@ -150,15 +171,17 @@ const styles = StyleSheet.create({
         borderColor: "#96A0AF",
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginBottom: 20,
-        fontSize: 18
+        fontSize: 18,
+        marginLeft: wp('10%')
     },
-    buttonContainer : {
+    buttonContainer: {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
         width: Dimensions.get('window').width - 80,
         borderRadius: 8,
         borderColor: "rgba(255,255,255,0.7)",
         margin: 10,
+        marginLeft: wp('10%')
     },
     buttonText: {
         color: "#FFF",

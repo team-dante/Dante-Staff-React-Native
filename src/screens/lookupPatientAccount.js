@@ -1,8 +1,9 @@
 'use strict';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert, Keyboard, SafeAreaView, Platform, KeyboardAvoidingView } from 'react-native';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 export default class LookupPatientAccount extends Component {
     constructor(props) {
@@ -18,18 +19,18 @@ export default class LookupPatientAccount extends Component {
 
         this.setState({ error: '', loading: true });
         let { phoneNumber } = this.state;
-        
+
         var self = this;
         firebase.database().ref(`/Patients`)
             .orderByChild("patientPhoneNumber").equalTo(phoneNumber)
-            .once('value', function(snapshot) {
+            .once('value', function (snapshot) {
                 let firstName = '';
                 let lastName = '';
                 let patientPin = '';
                 let founded = false;
 
                 // if founded
-                snapshot.forEach(function(data) {
+                snapshot.forEach(function (data) {
                     firstName = data.val().firstName;
                     lastName = data.val().lastName;
                     patientPin = data.val().patientPin;
@@ -47,13 +48,15 @@ export default class LookupPatientAccount extends Component {
                         'Error',
                         'Patient\'s account cannot be found',
                         [
-                            { text: "Close", onPress: ()=> {
-                                self.setState({phoneNumber: '', loading: false});
-                            }}
+                            {
+                                text: "Close", onPress: () => {
+                                    self.setState({ phoneNumber: '', loading: false });
+                                }
+                            }
                         ]
                     );
                 }
-            }, function(error) {
+            }, function (error) {
                 console.log("error = " + error);
             });
     }
@@ -77,17 +80,33 @@ export default class LookupPatientAccount extends Component {
     }
 
     render() {
+        const shouldSetResponse = () => true;
+        const onRelease = () => (
+            Keyboard.dismiss()
+        );
         return (
-            <View style={styles.container}>
-                <Text style={styles.text}>Patient's Phone Number</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    autoCapitalize="none"
-                    onChangeText={phoneNumber => this.setState({ phoneNumber })}
-                    value={this.state.phoneNumber} />
-                {this.renderButton()}
-            </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : null}
+                style={{ flex: 1 }} >
+                <SafeAreaView style={styles.container}>
+                    <View
+                        onResponderRelease={onRelease}
+                        onStartShouldSetResponder={shouldSetResponse}
+                        style={{ height: hp('100%') }} style={styles.inner}>
+                        <View style={styles.container}>
+                            <Text style={styles.text}>Patient's Phone Number</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={false}
+                                autoCapitalize="none"
+                                keyboardType='numeric'
+                                onChangeText={phoneNumber => this.setState({ phoneNumber })}
+                                value={this.state.phoneNumber} />
+                            {this.renderButton()}
+                        </View>
+                    </View>
+                </SafeAreaView>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -95,9 +114,13 @@ export default class LookupPatientAccount extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#ffffff',
+    },
+    inner: {
+        paddingBottom: hp('1%'),
+        flex: 1,
+        justifyContent: "flex-end",
     },
     text: {
         alignSelf: 'flex-start',
@@ -114,15 +137,17 @@ const styles = StyleSheet.create({
         borderColor: "#96A0AF",
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginBottom: 20,
-        fontSize: 18
+        fontSize: 18,
+        marginLeft: wp('10%')
     },
-    buttonContainer : {
+    buttonContainer: {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
         width: Dimensions.get('window').width - 80,
         borderRadius: 8,
         borderColor: "rgba(255,255,255,0.7)",
         margin: 10,
+        marginLeft: wp('10%')
     },
     buttonText: {
         color: "#FFF",

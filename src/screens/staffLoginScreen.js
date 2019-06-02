@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { Image, View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
+import { Image, View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ActivityIndicator, Dimensions, Keyboard, SafeAreaView, Platform, KeyboardAvoidingView } from 'react-native';
 import TouchID from 'react-native-touch-id';
 import firebase from 'firebase';
 import { Actions } from 'react-native-router-flux';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 class StaffLogin extends Component {
     constructor(props) {
         super(props);
         // email = phoneNumber + @email.com
         // password = 4-digit PIN + "ABCDEFG"
-        this.state = { email: '', password: '', error: '', loading: ''};
+        this.state = { email: '', password: '', error: '', loading: '' };
     }
 
     componentWillMount() {
@@ -61,7 +62,7 @@ class StaffLogin extends Component {
                 this.onLoginFailure.bind(this)(error);
             });
     }
-    
+
     onLoginSuccess(user) {
         console.log("SUCCESS");
         console.log(user)
@@ -106,32 +107,49 @@ class StaffLogin extends Component {
     }
 
     render() {
+        const shouldSetResponse = () => true;
+        const onRelease = () => (
+            Keyboard.dismiss()
+        );
         return (
-            <View style={styles.container}>
-                <Image 
-                    style={{width: 110, height: 110, borderRadius: 20}} 
-                    source={require('../../appIcon/dante-staff.png')} />
-                <Text style={styles.header}>Dante Staff</Text>
-                <Text style={styles.text}>Staff's Phone Number</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={false}
-                    autoCapitalize="none"
-                    onChangeText={email => {this.setState({ email })}}
-                    value={this.state.email} />
-                <Text style={styles.text}>PIN</Text>
-                <TextInput
-                    style={styles.input}
-                    secureTextEntry={true}
-                    autoCapitalize="none"
-                    onChangeText={password => this.setState({ password })}
-                    value={this.state.password} />
-                {this.renderButton()}
-                <Text 
-                    style={[styles.text, {fontSize: 14, alignItems: 'center'}]}>
-                    Face ID/Touch ID will be auto-triggered once you have signed in
-                </Text>
-            </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : null}
+                style={{ flex: 1 }} >
+                <SafeAreaView style={styles.container}>
+                    <View
+                        onResponderRelease={onRelease}
+                        onStartShouldSetResponder={shouldSetResponse}
+                        style={{ height: hp('100%') }} style={styles.inner}>
+                        <View style={styles.container}>
+                            <Image
+                                style={{ width: 110, height: 110, borderRadius: 20 }}
+                                source={require('../../appIcon/dante-staff.png')} />
+                            <Text style={styles.header}>Dante Staff</Text>
+                            <Text style={styles.text}>Staff's Phone Number</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={false}
+                                autoCapitalize="none"
+                                keyboardType='numeric'
+                                onChangeText={email => { this.setState({ email }) }}
+                                value={this.state.email} />
+                            <Text style={styles.text}>PIN</Text>
+                            <TextInput
+                                style={styles.input}
+                                secureTextEntry={true}
+                                autoCapitalize="none"
+                                keyboardType='numeric'
+                                onChangeText={password => this.setState({ password })}
+                                value={this.state.password} />
+                            {this.renderButton()}
+                            <Text
+                                style={[styles.text, { fontSize: 14, alignItems: 'center' }]}>
+                                Face ID/Touch ID will be auto-triggered once you have signed in
+                        </Text>
+                        </View>
+                    </View>
+                </SafeAreaView>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -146,11 +164,16 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 1, height: 0 },
         textShadowRadius: 2,
     },
+    inner: {
+        paddingBottom: hp('1%'),
+        flex: 1,
+        justifyContent: "flex-end",
+    },
     container: {
         flex: 1,
         alignItems: 'center',
-        paddingTop: 80,
         backgroundColor: '#ffffff',
+        paddingTop: hp('5%')
     },
     text: {
         alignSelf: 'flex-start',

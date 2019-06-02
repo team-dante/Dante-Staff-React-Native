@@ -20,11 +20,11 @@ class StaffWelcome extends Component {
         // search for the staff obj that has the same phoneNum as currentUser has
         firebase.database().ref(`/staffs/`).orderByChild("phoneNum").equalTo(phoneNum)
             .once('value', function (snapshot) {
-                let firstName = '';
+                let lastName = '';
                 snapshot.forEach(function (data) {
-                    firstName = data.val().firstName;
+                    lastName = data.val().lastName;
                 });
-                self.setState({ staffName: firstName });
+                self.setState({ staffName: lastName });
             });
     }
 
@@ -72,8 +72,8 @@ class StaffWelcome extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#fcfcfc'
     },
     topText: {

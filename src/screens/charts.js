@@ -93,7 +93,7 @@ class Charts extends Component {
 
         return (
             <PieChart
-                style={ { height: 200 } }
+                style={ { height: 300 } }
                 data={ pieData }
             >
             <Labels />
@@ -103,7 +103,10 @@ class Charts extends Component {
     render() {
         return (
             <View style={styles.container}>
-                {drawGraph(this.state.graphData)}
+                <View style={styles.card}>
+                    <Text style={styles.text}>Across all patients, they have spent... </Text>
+                    {this.drawGraph(this.state.graphData)}
+                </View>
                 <View style={styles.labelRow}>
                     <View style={styles.labelColumn}>
                         <RoomLabels room={'Waiting Rm'} color={'#B8E653'}/>
@@ -130,11 +133,16 @@ const styles = StyleSheet.create({
     dates: {
         fontSize: wp('5%'),
     },
+    text: {
+        fontSize: wp('4%'),
+        paddingVertical: hp('1.5%'),
+        fontFamily: 'Poppins-Bold'
+    },
     card: {
         backgroundColor: 'white',
         borderRadius: 15,
         margin: wp('3%'),
-        padding: wp('3%'),
+        padding: hp('2%'),
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -146,11 +154,11 @@ const styles = StyleSheet.create({
     },
     labelRow: {
         bottom: 0,
-        height: hp('12%'),
+        height: hp('20%'),
         width: wp('100%'),
         backgroundColor: '#fff',
         position: 'absolute',
-        flexDirection: 'row',
+        flexDirection: 'row'
     },
     labelColumn: {
         flexDirection: 'column',

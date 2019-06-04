@@ -1,4 +1,3 @@
-'use strict';
 import React, { Component } from 'react';
 import { Alert, StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import firebase from 'firebase';
@@ -41,6 +40,10 @@ class StaffWelcome extends Component {
                 <TouchableOpacity style={styles.buttonContainer}
                     onPress={() => Actions.lookupPatientAccount()}>
                     <Text style={styles.buttonText}>Look up Patient's Account</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonContainer}
+                    onPress={() => Actions.charts()}>
+                    <Text style={styles.buttonText}>View Patient Statistics</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonContainer}
                     onPress={() => {

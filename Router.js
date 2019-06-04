@@ -7,7 +7,8 @@ import StaffWelcome from './src/screens/staffWelcomeScreen';
 import GeneratePatientAccount from './src/screens/generatePatientAccount';
 import LookupPatientAccount from './src/screens/lookupPatientAccount';
 import ShowPatientAccount from './src/screens/showPatientAccount';
-import QrScanner from './src/screens/qrScanner'
+import QrScanner from './src/screens/qrScanner';
+import Charts from './src/screens/charts';
 
 class RouterComponent extends Component {
     logOut() {
@@ -40,10 +41,6 @@ class RouterComponent extends Component {
                     </Scene>
                     <Scene key="main" type={ActionConst.RESET}>
                         <Scene
-                            // leftTitle="Sign Out"
-                            // onLeft={() => {
-                            //     this.logOut()
-                            // }}
                             rightTitle="Scan QR"
                             onRight={() => { Actions.qrScanner() }}
                             key="StaffWelcome"
@@ -55,6 +52,7 @@ class RouterComponent extends Component {
                             title="Generate Account" />
                         <Scene key="lookupPatientAccount" component={LookupPatientAccount}
                             title="Lookup Account" />
+                        <Scene key="charts" component={Charts} title="Patient Stats" back={true} backTitle={'Back'} />
                     </Scene>
                     <Scene key="showAcct" type={ActionConst.RESET}>
                         <Scene key="showPatientAccount" component={ShowPatientAccount}

@@ -8,6 +8,7 @@
     "ios": "react-native run-ios --simulator \"iPhone Xs Max\""
   },
   "dependencies": {
+    "eslint": "^5.16.0",
     "firebase": "^5.10.0",
     "react": "16.8.3",
     "react-native": "0.59.4",
@@ -17,6 +18,8 @@
     "react-native-qrcode-scanner": "^1.2.1",
     "react-native-responsive-screen": "^1.2.2",
     "react-native-router-flux": "^4.0.6",
+    "react-native-svg": "^9.4.0",
+    "react-native-svg-charts": "^5.2.0",
     "react-native-touch-id": "^4.4.1",
     "react-navigation": "^3.8.1"
   },
@@ -30,5 +33,10 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
   }
 }

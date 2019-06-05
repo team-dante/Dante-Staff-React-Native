@@ -157,8 +157,8 @@ class StaffLogin extends Component {
 const styles = StyleSheet.create({
     header: {
         paddingVertical: 40,
-        fontSize: 30,
-        fontFamily: 'Futura',
+        fontSize: 36,
+        fontFamily: 'Poppins-Bold',
         fontWeight: 'bold',
         textShadowColor: '#c4c4c4',
         textShadowOffset: { width: 1, height: 0 },
@@ -190,13 +190,14 @@ const styles = StyleSheet.create({
         borderColor: "#96A0AF",
         borderBottomWidth: StyleSheet.hairlineWidth,
         marginBottom: 20,
-        fontSize: 18
+        fontSize: 18,
+        paddingLeft: 8
     },
     buttonContainer: {
         backgroundColor: "#428AF8",
         paddingVertical: 12,
         width: 300,
-        borderRadius: 4,
+        borderRadius: 8,
         borderColor: "rgba(255,255,255,0.7)",
         margin: 10,
     },

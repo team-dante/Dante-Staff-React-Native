@@ -20,7 +20,7 @@ class Charts extends Component {
         super(props);
         this.state = {graphData: []}
         // waiting room, treatment room 1
-        this.colors = ['#B8E653', '#53ACE6', '#53E681'];
+        this.colors = ['#B8E653', '#53ACE6', '#E653B8', '#E68153', '#536FE6'];
     }
 
     componentWillMount() {
@@ -37,6 +37,8 @@ class Charts extends Component {
         let wr_all = 0;
         let tr1_cnt = 0;
         let tr1_all = 0;
+        let ct_cnt = 0;
+        let ct_all = 0;
 
         for (d in data) {
             for (i in data[d]) {
@@ -49,13 +51,20 @@ class Charts extends Component {
                         tr1_cnt += 1
                         tr1_all += data[d][i][j]["diffTime"]
                     }
+                    else if (j == 'CT Room') {
+                        ct_cnt += 1
+                        ct_all += data[d][i][j]["diffTime"]
+                    }
                 }
             }
         }
+        
         let wr_avg = wr_all / wr_cnt;
         let tr1_avg = tr1_all / tr1_cnt;
-        let overal_avg = wr_avg + tr1_avg;
-        return [(wr_avg/overal_avg*100).toFixed(2), (tr1_avg/overal_avg*100).toFixed(2)];
+        let ct_avg = ct_all / ct_cnt;
+
+        let overal_avg = wr_avg + tr1_avg + ct_avg;
+        return [(wr_avg/overal_avg*100).toFixed(2), (tr1_avg/overal_avg*100).toFixed(2), (ct_avg/overal_avg*100).toFixed(2)];
     }
 
     drawGraph(data_points) {
@@ -104,7 +113,7 @@ class Charts extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.card}>
-                    <Text style={styles.text}>Across all patients, they have spent... </Text>
+                    <Text style={styles.text}>Across all patients, they have spent... %</Text>
                     {this.drawGraph(this.state.graphData)}
                 </View>
                 <View style={styles.labelRow}>
@@ -116,7 +125,6 @@ class Charts extends Component {
                     <View style={styles.labelColumn}>
                         <RoomLabels room={'Exam Rm'} color={'#E68153'}/>
                         <RoomLabels room={'CT Rm'} color={'#536FE6'}/>
-                        <RoomLabels room={'Transition Time'} color={'#53E681'}/>
                     </View>
                 </View>
             </View>

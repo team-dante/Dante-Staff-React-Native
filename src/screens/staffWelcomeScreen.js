@@ -43,7 +43,7 @@ class StaffWelcome extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonContainer}
                     onPress={() => Actions.charts()}>
-                    <Text style={styles.buttonText}>View Patient Statistics</Text>
+                    <Text style={styles.buttonText}>Track Patient Statistics</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonContainer}
                     onPress={() => {

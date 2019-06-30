@@ -37,6 +37,15 @@ export default class QrScanner extends Component {
             else if (e.data == 'private') {
                 this.updateDoctorLocation(phoneNumber, "private");
             }
+            else if (e.data == 'femaleWaitingRoom'){
+                this.updateDoctorLocation(phoneNumber, "femaleWaitingRoom");
+            }
+            else if (e.data == 'exam1'){
+                this.updateDoctorLocation(phoneNumber, "exam1");
+            }
+            else if (e.data == 'CTRoom'){
+                this.updateDoctorLocation(phoneNumber, "CTRoom");
+            }
             else {
                 this.invalidQrCode();
             }

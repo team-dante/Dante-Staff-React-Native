@@ -3,6 +3,7 @@ import {Platform, StyleSheet, Text, View, ListView, DeviceEventEmitter, FlatList
 import Beacons from 'react-native-beacons-manager';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firebase from 'firebase';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type Props = {};
 export default class beacons extends Component<Props> {
@@ -21,10 +22,13 @@ export default class beacons extends Component<Props> {
       dataSource: ds.cloneWithRows([]),
       major1: [],
       major2: [],
+      major3: [],
       total1: 0,
       total2: 0,
+      total3: 0,
       average1: 0,
       average2: 0,
+      average3: 0,
       count: 0,
       room: ''
     };
@@ -66,13 +70,15 @@ export default class beacons extends Component<Props> {
         let localCount = this.state.count
         let localMajor1 = this.state.major1;
         let localMajor2 = this.state.major2;
+        let localMajor3 = this.state.major3;
         let localTotal1 = this.state.total1;
         let localTotal2 = this.state.total2;
+        let localTotal3 = this.state.total3;
 
         if (localCount < 10) {
           localCount++;
 
-          // major 1 is either in element 0 or 1
+          // major 1 is either in element 0 or 1 or 2
           if (data.beacons[0] !== undefined && data.beacons[0]["major"] == 1 && data.beacons[0]["accuracy"] !== undefined && data.beacons[0]["accuracy"] != -1)
           {
             localMajor1.push(data.beacons[0]["accuracy"])
@@ -83,10 +89,15 @@ export default class beacons extends Component<Props> {
             localMajor1.push(data.beacons[1]["accuracy"])
             localTotal1++;
           }  
+          else if (data.beacons[2] !== undefined && data.beacons[2]["major"] == 1 && data.beacons[2]["accuracy"] !== undefined && data.beacons[2]["accuracy"] != -1)
+          {
+            localMajor1.push(data.beacons[2]["accuracy"])
+            localTotal1++;
+          } 
           else
             localMajor1.push(0)
 
-          // major 2 is either in element 0 or 1
+          // major 2 is either in element 0 or 1 or 2
           if (data.beacons[0] !== undefined && data.beacons[0]["major"] == 2 && data.beacons[0]["accuracy"] !== undefined && data.beacons[0]["accuracy"] != -1 )
           {
             localMajor2.push(data.beacons[0]["accuracy"])
@@ -97,14 +108,40 @@ export default class beacons extends Component<Props> {
             localMajor2.push(data.beacons[1]["accuracy"])
             localTotal2++;
           }
+          else if (data.beacons[2] !== undefined && data.beacons[2]["major"] == 2 && data.beacons[2]["accuracy"] !== undefined && data.beacons[2]["accuracy"] != -1 )
+          {
+            localMajor2.push(data.beacons[2]["accuracy"])
+            localTotal2++;
+          }
           else
             localMajor2.push(0)
 
-          this.setState({count: localCount, major1: localMajor1, major2: localMajor2, total1: localTotal1, total2: localTotal2 })
+          // major 3 is either in element 0 or 1 or 2
+          if (data.beacons[0] !== undefined && data.beacons[0]["major"] == 3 && data.beacons[0]["accuracy"] !== undefined && data.beacons[0]["accuracy"] != -1 )
+          {
+            localMajor3.push(data.beacons[0]["accuracy"])
+            localTotal3++;
+          }
+          else if (data.beacons[1] !== undefined && data.beacons[1]["major"] == 3 && data.beacons[1]["accuracy"] !== undefined && data.beacons[1]["accuracy"] != -1 )
+          {
+            localMajor3.push(data.beacons[1]["accuracy"])
+            localTotal3++;
+          }
+          else if (data.beacons[2] !== undefined && data.beacons[2]["major"] == 3 && data.beacons[2]["accuracy"] !== undefined && data.beacons[2]["accuracy"] != -1 )
+          {
+            localMajor3.push(data.beacons[2]["accuracy"])
+            localTotal3++;
+          }
+          else
+            localMajor3.push(0)
+
+          this.setState({count: localCount, major1: localMajor1, major2: localMajor2, major3: localMajor3, total1: localTotal1, total2: localTotal2, total3: localTotal3});
+
         }
         else {
           let localAverage1 = 0;
           let localAverage2 = 0;
+          let localAverage3 = 0;
 
           if (localTotal1 == 0)
             localAverage1 = 0;
@@ -116,17 +153,25 @@ export default class beacons extends Component<Props> {
           else
             localAverage2 = localMajor2.reduce((a, b) => a + b, 0) / localTotal2;
 
+          if (localAverage3 == 0) 
+            localAverage3 = 0;
+          else 
+            localAverage3 = localMajor3.reduce((a, b) => a + b, 0) / localTotal3;
+
         if (localAverage1 <= 1) {
             this.updateDoctorLocation(phoneNumber, 'exam1');
         } 
         else if (localAverage2 <= 1) {
             this.updateDoctorLocation(phoneNumber, 'CTRoom');
         }
-        else if (localAverage1 > 1 || localAverage2 > 1) {
+        else if (localAverage3 <= 1) {
+          this.updateDoctorLocation(phoneNumber, 'femaleWaitingRoom');
+        }
+        else if (localAverage1 > 1 || localAverage2 > 1 || localAverage3 > 1) {
             this.updateDoctorLocation(phoneNumber, 'None')
         }
 
-          this.setState({count: 0, major1: [], major2: [], total1: 0, total2: 0, average1: localAverage1, average2: localAverage2});
+          this.setState({count: 0, major1: [], major2: [], major3: [], total1: 0, total2: 0, total3: 0, average1: localAverage1, average2: localAverage2, average3: localAverage3});
         }
 
         this.setState({
@@ -174,41 +219,42 @@ export default class beacons extends Component<Props> {
   }
 
   render() {
-    const { bluetoothState, dataSource, major1, major2, count, room, average1, average2 } =  this.state;
-    // console.log(major1);
-    // console.log(major2);
-    // console.log(total1);
-    // console.log(total2);
-    // console.log(average1);
-    // console.log(average2);
+    const { bluetoothState, dataSource, major1, major2, major3, count, room, average1, average2, average3 } =  this.state;
 
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.headline}>
           All beacons in the area will be displayed
         </Text>
         <Text style={{fontWeight: 'bold'}}>Major 1:</Text>
         {
           major1.map((item, key)=>(
-            <Text key={key}> {item} </Text>
+            <Text key={key}> {item.toFixed(2)} </Text>
           ))
         }
         <Text style={{fontWeight: 'bold'}}>Major 2:</Text>
         {
           major2.map((item, key)=>(
-            <Text key={key}> {item} </Text>
+            <Text key={key}> {item.toFixed(2)} </Text>
+          ))
+        }
+        <Text style={{fontWeight: 'bold'}}>Major 3:</Text>
+        {
+          major3.map((item, key)=>(
+            <Text key={key}> {item.toFixed(2)} </Text>
           ))
         }
         <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
-        <Text style={{fontWeight: 'bold'}}> Average distance of major 1: {average1} </Text>
-        <Text style={{fontWeight: 'bold'}}> Average distance of major 2: {average2} </Text>
+        <Text style={{fontWeight: 'bold'}}> Average distance of major 1: {average1.toFixed(2)} </Text>
+        <Text style={{fontWeight: 'bold'}}> Average distance of major 2: {average2.toFixed(2)} </Text>
+        <Text style={{fontWeight: 'bold'}}> Average distance of major 3: {average3.toFixed(2)} </Text>
         <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {room} </Text>
         <ListView
           dataSource={ dataSource }
           enableEmptySections={ true }
           renderRow={this.renderRow}
         />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -216,8 +262,6 @@ export default class beacons extends Component<Props> {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 60,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',

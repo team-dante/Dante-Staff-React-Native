@@ -3,6 +3,7 @@ package com.danteapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.mackentoch.beaconsandroid.BeaconsAndroidPackage;
 import com.horcrux.svg.SvgPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new BeaconsAndroidPackage(),
             new SvgPackage(),
             new RNCameraPackage(),
             new ReactNativeConfigPackage(),

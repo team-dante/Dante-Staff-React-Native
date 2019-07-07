@@ -9,6 +9,7 @@ import LookupPatientAccount from './src/screens/lookupPatientAccount';
 import ShowPatientAccount from './src/screens/showPatientAccount';
 import QrScanner from './src/screens/qrScanner';
 import Charts from './src/screens/charts';
+import Beacons from './src/screens/beacons'
 
 class RouterComponent extends Component {
     logOut() {
@@ -53,6 +54,7 @@ class RouterComponent extends Component {
                         <Scene key="lookupPatientAccount" component={LookupPatientAccount}
                             title="Lookup Account" />
                         <Scene key="charts" component={Charts} title="Patient Stats" back={true} backTitle={'Back'} />
+                        <Scene key="beacons" component={Beacons} title="Display All Beacons" back={true} backTitle={'Back'} />
                     </Scene>
                     <Scene key="showAcct" type={ActionConst.RESET}>
                         <Scene key="showPatientAccount" component={ShowPatientAccount}

@@ -34,6 +34,10 @@ class StaffWelcome extends Component {
                 <Text style={styles.topText}>Greetings, Staff {staffName}</Text>
                 <Text style={styles.bottomText}>Services for Patients</Text>
                 <TouchableOpacity style={styles.buttonContainer}
+                    onPress={() => Actions.beacons()}>
+                    <Text style={styles.buttonText}>Display All Beacons</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonContainer}
                     onPress={() => Actions.generatePatientAccount()}>
                     <Text style={styles.buttonText}>Generate Patient's Account</Text>
                 </TouchableOpacity>

@@ -153,23 +153,22 @@ export default class beacons extends Component<Props> {
           else
             localAverage2 = localMajor2.reduce((a, b) => a + b, 0) / localTotal2;
 
-          if (localAverage3 == 0) 
+          if (localTotal3 == 0) 
             localAverage3 = 0;
           else 
             localAverage3 = localMajor3.reduce((a, b) => a + b, 0) / localTotal3;
 
-        if (localAverage1 <= 1) {
+        if (localAverage1 <= 1 && localAverage1 != 0) {
             this.updateDoctorLocation(phoneNumber, 'exam1');
         } 
-        else if (localAverage2 <= 1) {
+        else if (localAverage2 <= 1 && localAverage2 != 0) {
             this.updateDoctorLocation(phoneNumber, 'CTRoom');
         }
-        else if (localAverage3 <= 1) {
+        else if (localAverage3 <= 1 && localAverage3 != 0) {
           this.updateDoctorLocation(phoneNumber, 'femaleWaitingRoom');
         }
-        else if (localAverage1 > 1 || localAverage2 > 1 || localAverage3 > 1) {
-            this.updateDoctorLocation(phoneNumber, 'None')
-        }
+        else 
+            this.updateDoctorLocation(phoneNumber, 'Private')
 
           this.setState({count: 0, major1: [], major2: [], major3: [], total1: 0, total2: 0, total3: 0, average1: localAverage1, average2: localAverage2, average3: localAverage3});
         }
@@ -229,25 +228,25 @@ export default class beacons extends Component<Props> {
         <Text style={{fontWeight: 'bold'}}>Major 1:</Text>
         {
           major1.map((item, key)=>(
-            <Text key={key}> {item.toFixed(2)} </Text>
+            <Text key={key}> {item.toFixed(2)}m </Text>
           ))
         }
         <Text style={{fontWeight: 'bold'}}>Major 2:</Text>
         {
           major2.map((item, key)=>(
-            <Text key={key}> {item.toFixed(2)} </Text>
+            <Text key={key}> {item.toFixed(2)}m </Text>
           ))
         }
         <Text style={{fontWeight: 'bold'}}>Major 3:</Text>
         {
           major3.map((item, key)=>(
-            <Text key={key}> {item.toFixed(2)} </Text>
+            <Text key={key}> {item.toFixed(2)}m </Text>
           ))
         }
         <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
-        <Text style={{fontWeight: 'bold'}}> Average distance of major 1: {average1.toFixed(2)} </Text>
-        <Text style={{fontWeight: 'bold'}}> Average distance of major 2: {average2.toFixed(2)} </Text>
-        <Text style={{fontWeight: 'bold'}}> Average distance of major 3: {average3.toFixed(2)} </Text>
+        <Text style={{fontWeight: 'bold'}}> Average distance of major 1 (exam1): {average1.toFixed(2)}m </Text>
+        <Text style={{fontWeight: 'bold'}}> Average distance of major 2 (CTRoom): {average2.toFixed(2)}m </Text>
+        <Text style={{fontWeight: 'bold'}}> Average distance of major 3 (femaleWaitingRoom): {average3.toFixed(2)}m </Text>
         <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {room} </Text>
         <ListView
           dataSource={ dataSource }
@@ -264,7 +263,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   btleConnectionStatus: {
     fontSize: 20,

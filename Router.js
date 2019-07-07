@@ -54,7 +54,7 @@ class RouterComponent extends Component {
                         <Scene key="lookupPatientAccount" component={LookupPatientAccount}
                             title="Lookup Account" />
                         <Scene key="charts" component={Charts} title="Patient Stats" back={true} backTitle={'Back'} />
-                        <Scene key="beacons" component={Beacons} title="Display All Beacons" back={true} backTitle={'Back'} />
+                        <Scene key="beacons" component={Beacons} title="" back={true} backTitle={'Stop Broadcasting'} />
                     </Scene>
                     <Scene key="showAcct" type={ActionConst.RESET}>
                         <Scene key="showPatientAccount" component={ShowPatientAccount}

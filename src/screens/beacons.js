@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ListView, DeviceEventEmitter, FlatList} from 'react-native';
+import {Platform, StyleSheet, Text, View, ListView, DeviceEventEmitter, FlatList, Alert} from 'react-native';
 import Beacons from 'react-native-beacons-manager';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import firebase from 'firebase';
 
 type Props = {};
 export default class beacons extends Component<Props> {
@@ -24,7 +25,8 @@ export default class beacons extends Component<Props> {
       total2: 0,
       average1: 0,
       average2: 0,
-      count: 0
+      count: 0,
+      room: ''
     };
   }
 
@@ -44,6 +46,12 @@ export default class beacons extends Component<Props> {
   }
 
   componentDidMount() {
+
+    // get first part before @email.com
+    let user = firebase.auth().currentUser;
+    console.log(user);
+    let phoneNumber = user.email.split('@')[0];
+
     //
     // component state aware here - attach events
     //
@@ -108,6 +116,16 @@ export default class beacons extends Component<Props> {
           else
             localAverage2 = localMajor2.reduce((a, b) => a + b, 0) / localTotal2;
 
+        if (localAverage1 <= 1) {
+            this.updateDoctorLocation(phoneNumber, 'exam1');
+        } 
+        else if (localAverage2 <= 1) {
+            this.updateDoctorLocation(phoneNumber, 'CTRoom');
+        }
+        else if (localAverage1 > 1 || localAverage2 > 1) {
+            this.updateDoctorLocation(phoneNumber, 'None')
+        }
+
           this.setState({count: 0, major1: [], major2: [], total1: 0, total2: 0, average1: localAverage1, average2: localAverage2});
         }
 
@@ -116,6 +134,14 @@ export default class beacons extends Component<Props> {
         });
       }
     );
+  }
+
+  updateDoctorLocation(phoneNumber, roomId) {
+    firebase.database().ref('/DoctorLocation/' + phoneNumber).update({
+        room: roomId
+    }).then((data) => {
+        this.setState({ room: roomId })
+    });
   }
 
   componentWillUnMount(){
@@ -148,7 +174,7 @@ export default class beacons extends Component<Props> {
   }
 
   render() {
-    const { bluetoothState, dataSource, major1, major2, count, total1, total2, average1, average2 } =  this.state;
+    const { bluetoothState, dataSource, major1, major2, count, room, average1, average2 } =  this.state;
     // console.log(major1);
     // console.log(major2);
     // console.log(total1);
@@ -176,6 +202,7 @@ export default class beacons extends Component<Props> {
         <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
         <Text style={{fontWeight: 'bold'}}> Average distance of major 1: {average1} </Text>
         <Text style={{fontWeight: 'bold'}}> Average distance of major 2: {average2} </Text>
+        <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {room} </Text>
         <ListView
           dataSource={ dataSource }
           enableEmptySections={ true }

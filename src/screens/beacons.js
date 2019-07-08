@@ -42,6 +42,7 @@ export default class beacons extends Component {
   }
 
   componentDidMount() {
+    // records a queue of 10 distances for each beacon
     let roomDict = {1: [], 2: [], 3:[]};
     // map beacon major to the real clinic room
     const majorToRoom = { 1: "exam1", 2: "CTRoom", 3: "femaleWaitingRoom" };
@@ -61,7 +62,7 @@ export default class beacons extends Component {
       'beaconsDidRange',
       (data) => {
         console.log(data.beacons);
-        
+
         // sort all beacons; from nearest distance to the furthest distance
         data.beacons.sort(function(first, second){
           return first.accuracy - second.accuracy;
@@ -72,40 +73,34 @@ export default class beacons extends Component {
           localCount++;
           this.setState({count: localCount});
         }
+        // push beacon distance; if undefined or -1, push 0
+        for (let beacon of data.beacons) {
+          if (beacon["accuracy"] != undefined || beacon["accuracy"] != -1)
+            roomDict[ beacon["major"] ].push(beacon["accuracy"])
+          else
+            roomDict[ beacon["major"] ].push(0)
+        }
 
-        // take a closer look at the cloest beacon (aka first elem after sorting data.beacons)
-        // if accurancy of the closest beacon is less than the cutoff, push 1; otherwise push 0
-        // 1 means in-range; 0 means out-of-range
-        if (data.beacons[0]["accuracy"] <= cutoff[ data.beacons[0]["major"] ]) {
-          roomDict[ data.beacons[0]["major"] ].push(1)
-        }
-        else {
-          roomDict[ data.beacons[0]["major"] ].push(0)
-        }
-        // for any other beacons which is not the closest, push 0 (out-of-range)
-        for (let i = 1; i < data.beacons.length; i++) {
-          roomDict[ data.beacons[i]["major"] ].push(0)
-        }
         // after 10 rounds, implement FIFO
         if (localCount >= 10) {
-          // pop out the oldest beacon data at front of the array
+          let avgList = []
           for (let beacon of data.beacons) {
+            // pop out the oldest beacon data at front of the array
             roomDict[ beacon["major"] ].shift()
+            const avg = (roomDict[ beacon["major"] ].reduce((acc, c) => acc + c, 0)) / 10.0;
+            avgList.push([ beacon["major"], avg ])
           }
-          let hasAllOnes = false;
-          // check which beacon major's array has all 1's (in-range the whole time)
-          // set the currRoom; hasAllOnes = true
-          for (let beacon of data.beacons) {
-            if (roomDict[ beacon["major"] ].every((val) => val === 1)) {
-              this.setState({currRoom: majorToRoom[ beacon["major"] ]});
-              hasAllOnes = true;
-              break;
-            }
-          }
-          // if no array has all 1's, set currRoom to Private
-          if (!hasAllOnes) {
+          // avgList = [[major, avg distance], ...] (e.g. avgList = [[1, 1.0], [2, 1.4], [3, 2.0]])
+          // sort by avg distance (closest beacon will come first)
+          avgList.sort(function(first, second) {
+            return first[1] - second[1];
+          });
+          // if the avg distance of the cloest beacon is greater than the cutoff, then in "Private" mode
+          // else set the current cloest clinic room
+          if (avgList[0][1] >= cutoff[avgList[0][0]])
             this.setState({currRoom: 'Private'});
-          }
+          else
+            this.setState({currRoom: majorToRoom[avgList[0][0]]})
         }
 
         this.setState({
@@ -161,9 +156,6 @@ export default class beacons extends Component {
         <Text style={styles.headline}>
           All beacons in the area will be displayed
         </Text>
-        <Text>{roomDict[1]}</Text>
-        <Text>{roomDict[2]}</Text>
-        <Text>{roomDict[3]}</Text>
         
         <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
         <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {currRoom} </Text>

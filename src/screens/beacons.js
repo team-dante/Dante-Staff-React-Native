@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, ListView, DeviceEventEmitter, FlatList, Alert} from 'react-native';
+import { StyleSheet, Text, View, ListView, DeviceEventEmitter, FlatList} from 'react-native';
 import Beacons from 'react-native-beacons-manager';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -59,7 +58,7 @@ export default class beacons extends Component {
         // get first part before @email.com
         let user = firebase.auth().currentUser;
         let phoneNumber = user.email.split('@')[0];
-
+        let today = this.formattedDate(Date.now());
         //
         // component state aware here - attach events
         //
@@ -83,7 +82,7 @@ export default class beacons extends Component {
                 // push beacon distance; if undefined or -1, push 0
                 for (let beacon of data.beacons) {
 
-                    // debugging purposes
+                    // ------- debugging purposes ---------
                     if (beacon["major"] == 1) {
                         this.setState({major1: roomDict[beacon["major"]]})
                     } 
@@ -93,6 +92,8 @@ export default class beacons extends Component {
                     else if (beacon["major"] == 3) {
                         this.setState({major3: roomDict[beacon["major"]]})
                     } 
+                     // ------ end of debugging ---------
+
                     // undefined or -1 will skew the distance to 999m
                     if (beacon["accuracy"] != undefined && beacon["accuracy"] != -1) {
                         roomDict[ beacon["major"] ].push(beacon["accuracy"])
@@ -127,33 +128,42 @@ export default class beacons extends Component {
                         this.setState({currRoom: majorToRoom[avgList[0][0]]})
                 }
                 
-                // time tracking starts here
+                // ------------ time tracking starts here --------------
                 var self = this;
                 firebase.database().ref('/DoctorLocation/' + phoneNumber).once('value', function(snapshot) {
                     self.setState({oldRoom: snapshot.val().room});
 
+                    let path = '/DoctorVisitByDates/' + phoneNumber + '/' + today;
                     const {currRoom, oldRoom, timeElapsed } = self.state;
+                    // if the prev room is "Private" but the current one isn't, update current room's start time
                     if (oldRoom == 'Private' && currRoom != 'Private') {
-                        firebase.database().ref('/DoctorVisitByDates/' + phoneNumber).push({
+                        firebase.database().ref(path).push({
                             room: currRoom, time: Date.now(), isStartTime: true
                         })
-                    } else if (oldRoom != 'Private' && currRoom == 'Private') {
-                        firebase.database().ref('/DoctorVisitByDates/' + phoneNumber).push({
+                    } // if the prev room isn't "Private" but the current one is, update end time and time spent for prev room;
+                    // set the timer back to zero
+                    else if (oldRoom != 'Private' && currRoom == 'Private') {
+                        firebase.database().ref(path).push({
                             room: oldRoom, time: Date.now(), isStartTime: false, timeElapsed: timeElapsed
                         }).then(() => {
                             self.setState({timeElapsed: 0});
                         })
-                    } else if (oldRoom != currRoom && (oldRoom != 'Private' && currRoom != 'Private')) {
-                        firebase.database().ref('/DoctorVisitByDates/' + phoneNumber).push({
+                    } // if prev and curr room are not the same and they are not "Private",
+                    // 1. update end time and time spent for prev room; 2. set timer back to 0; 3. update current room's start time
+                    else if (oldRoom != currRoom && (oldRoom != 'Private' && currRoom != 'Private')) {
+                        firebase.database().ref(path).push({
                             room: oldRoom, time: Date.now(), isStartTime: false, timeElapsed: timeElapsed
                         }).then(() => {
                             self.setState({timeElapsed: 0});
+                            // delay 1 sec so that the next start time will not be the same as prev end time
                             setTimeout(() => {console.log("timeout 1 sec")}, 1000);
-                            firebase.database().ref('/DoctorVisitByDates/' + phoneNumber).push({
+                            firebase.database().ref(path).push({
                                 room: currRoom, time: Date.now(), isStartTime: true
                             })
                         })
                     }
+                    // ------------ time tracking ends here --------------
+
                     self.updateDoctorLocation(phoneNumber, self.state.currRoom);
                     self.setState({count: 0})
                 });
@@ -163,6 +173,8 @@ export default class beacons extends Component {
             });
             }
         );
+
+        // always listening for changes of all time tracking data
         firebase.database().ref('/DoctorVisitByDates/' + phoneNumber).orderByChild('time').on('value', function(snapshot) {
             self.setState({timeline: parseToFlatList(snapshot.val())})
         })
@@ -196,11 +208,21 @@ export default class beacons extends Component {
         }
         return jsonLst;
     }
-    
+
     updateDoctorLocation(phoneNumber, roomId) {
         firebase.database().ref('/DoctorLocation/' + phoneNumber).update({
             room: roomId
         });
+    }
+
+    // return YYYY-MM-DD format
+    formattedDate(now) {
+        var month = now.getMonth() + 1;
+        var formattedMonth = month < 10 ? '0' + month : month;
+        var date = now.getDate();
+        var formattedDate = date < 10 ? '0' + date : date;
+        // outputs "2019-05-10"
+        return now.getFullYear() + '-' + formattedMonth + '-' + formattedDate;
     }
 
     componentWillUnMount(){
@@ -236,58 +258,58 @@ export default class beacons extends Component {
         const { dataSource, count, currRoom, major1, major2, major3 } =  this.state;
 
         return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.headline}>
-            All beacons in the area will be displayed
-            </Text>
-            <Text style={{fontWeight: 'bold'}}>Major 1:</Text>
-            {
-            major1.map((item, key)=>(
-                <Text key={key}> {item.toFixed(2)} </Text>
-            ))
-            }
-            <Text style={{fontWeight: 'bold'}}>Major 2:</Text>
-            {
-            major2.map((item, key)=>(
-                <Text key={key}> {item.toFixed(2)} </Text>
-            ))
-            }
-            <Text style={{fontWeight: 'bold'}}>Major 3:</Text>
-            {
-            major3.map((item, key)=>(
-                <Text key={key}> {item.toFixed(2)} </Text>
-            ))
-            }
-            <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
-            <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {currRoom} </Text>
-            <ListView
-            dataSource={ dataSource }
-            enableEmptySections={ true }
-            renderRow={this.renderRow}
-            />
-        </ScrollView>
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.headline}>
+                All beacons in the area will be displayed
+                </Text>
+                <Text style={{fontWeight: 'bold'}}>Major 1:</Text>
+                {
+                    major1.map((item, key)=>(
+                        <Text key={key}> {item.toFixed(2)} </Text>
+                    ))
+                }
+                <Text style={{fontWeight: 'bold'}}>Major 2:</Text>
+                {
+                    major2.map((item, key)=>(
+                        <Text key={key}> {item.toFixed(2)} </Text>
+                    ))
+                }
+                <Text style={{fontWeight: 'bold'}}>Major 3:</Text>
+                {
+                    major3.map((item, key)=>(
+                        <Text key={key}> {item.toFixed(2)} </Text>
+                    ))
+                }
+                <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
+                <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {currRoom} </Text>
+                <ListView
+                    dataSource={ dataSource }
+                    enableEmptySections={ true }
+                    renderRow={this.renderRow}
+                />
+            </ScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  btleConnectionStatus: {
-    fontSize: 20,
-    paddingTop: 20
-  },
-  headline: {
-    fontSize: 20,
-    paddingTop: 20
-  },
-  row: {
-    padding: 8,
-    paddingBottom: 16
-  },
+    container: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    btleConnectionStatus: {
+        fontSize: 20,
+        paddingTop: 20
+    },
+    headline: {
+        fontSize: 20,
+        paddingTop: 20
+    },
+    row: {
+        padding: 8,
+        paddingBottom: 16
+    },
     smallText: {
-    fontSize: 11
-  }
+        fontSize: 11
+    }
 });

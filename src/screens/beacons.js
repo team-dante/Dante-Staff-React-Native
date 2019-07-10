@@ -4,6 +4,22 @@ import Beacons from 'react-native-beacons-manager';
 import firebase from 'firebase';
 import { ScrollView } from 'react-native-gesture-handler';
 
+class FlatListItem extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <View style={{padding: 10}}>
+                <Text style={{fontWeight: 'bold'}}>Room: {this.props.item.room}</Text>
+                <Text>StartTime: {this.props.item.startTime}</Text>
+                <Text>EndTime: {this.props.item.endTime}</Text>
+                <Text>TimeElpased: {this.props.item.timeElapsed}</Text>
+            </View>
+        );
+    }
+}
 export default class beacons extends Component {
     constructor(props) {
         super(props);
@@ -58,7 +74,7 @@ export default class beacons extends Component {
         // get first part before @email.com
         let user = firebase.auth().currentUser;
         let phoneNumber = user.email.split('@')[0];
-        let today = this.formattedDate(Date.now());
+        let today = this.formattedDate(new Date());
         //
         // component state aware here - attach events
         //
@@ -173,10 +189,10 @@ export default class beacons extends Component {
             });
             }
         );
-
+        var self = this;
         // always listening for changes of all time tracking data
-        firebase.database().ref('/DoctorVisitByDates/' + phoneNumber).orderByChild('time').on('value', function(snapshot) {
-            self.setState({timeline: parseToFlatList(snapshot.val())})
+        firebase.database().ref('/DoctorVisitByDates/' + phoneNumber + '/' + today).orderByChild('time').on('value', function(snapshot) {
+            self.setState({timeline: self.parseToFlatList(snapshot.val())})
         })
     }
 
@@ -206,7 +222,7 @@ export default class beacons extends Component {
         for (let i of newLst) {
             finalFlatLst.push(i[0])
         }
-        return jsonLst;
+        return finalFlatLst;
     }
 
     updateDoctorLocation(phoneNumber, roomId) {
@@ -262,26 +278,43 @@ export default class beacons extends Component {
                 <Text style={styles.headline}>
                 All beacons in the area will be displayed
                 </Text>
-                <Text style={{fontWeight: 'bold'}}>Major 1:</Text>
-                {
-                    major1.map((item, key)=>(
-                        <Text key={key}> {item.toFixed(2)} </Text>
-                    ))
-                }
-                <Text style={{fontWeight: 'bold'}}>Major 2:</Text>
-                {
-                    major2.map((item, key)=>(
-                        <Text key={key}> {item.toFixed(2)} </Text>
-                    ))
-                }
-                <Text style={{fontWeight: 'bold'}}>Major 3:</Text>
-                {
-                    major3.map((item, key)=>(
-                        <Text key={key}> {item.toFixed(2)} </Text>
-                    ))
-                }
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View style={{width: '33.3%'}}>
+                        <Text style={{fontWeight: 'bold'}}>Major 1:</Text>
+                        {
+                            major1.map((item, key)=>(
+                                <Text key={key}> {item.toFixed(2)}m </Text>
+                            ))
+                        }
+                    </View>
+                    <View style={{width: '33.3%'}}>
+                        <Text style={{fontWeight: 'bold'}}>Major 2:</Text>
+                        {
+                            major2.map((item, key)=>(
+                                <Text key={key}> {item.toFixed(2)}m </Text>
+                            ))
+                        }
+                    </View>
+                    <View style={{width: '33.3%'}}>
+                        <Text style={{fontWeight: 'bold'}}>Major 3:</Text>
+                        {
+                            major3.map((item, key)=>(
+                                <Text key={key}> {item.toFixed(2)}m </Text>
+                            ))
+                        }
+                    </View>
+                </View>
                 <Text style={{fontWeight: 'bold'}}>Count: {count} </Text> 
                 <Text style={{fontWeight: 'bold', color: 'blue'}}> You are now in Room {currRoom} </Text>
+                <FlatList
+                    data={this.state.timeline}
+                    renderItem={({item, index}) => {
+                        return (
+                            <FlatListItem item={item} index={index}></FlatListItem>
+                        );
+                    }}
+                >
+                </FlatList>
                 <ListView
                     dataSource={ dataSource }
                     enableEmptySections={ true }

@@ -10,6 +10,7 @@
   "dependencies": {
     "eslint": "^5.16.0",
     "firebase": "^5.10.0",
+    "mixin-deep": "^2.0.1",
     "react": "16.8.3",
     "react-native": "^0.60.5",
     "react-native-beacons-manager": "^1.0.7",
@@ -22,7 +23,8 @@
     "react-native-svg": "^9.4.0",
     "react-native-svg-charts": "^5.2.0",
     "react-native-touch-id": "^4.4.1",
-    "react-navigation": "^3.8.1"
+    "react-navigation": "^3.8.1",
+    "set-value": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.4.3",

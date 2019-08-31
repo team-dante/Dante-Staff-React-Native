@@ -11,7 +11,7 @@
     "eslint": "^5.16.0",
     "firebase": "^5.10.0",
     "react": "16.8.3",
-    "react-native": "0.59.4",
+    "react-native": "^0.60.5",
     "react-native-beacons-manager": "^1.0.7",
     "react-native-camera": "^2.9.0",
     "react-native-config": "^0.11.7",
